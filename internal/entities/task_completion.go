@@ -20,8 +20,7 @@ type (
 		DeletedAt      gorm.DeletedAt `gorm:"index"`
 
 		// Relationships
-		Task  EventTask `gorm:"foreignKey:TaskID"`
-		User  User      `gorm:"foreignKey:UserID"`
-		Event Event     `gorm:"foreignKey:EventID"`
+		User  User  `gorm:"foreignKey:UserID"`
+		Event Event `gorm:"foreignKey:EventID"`
 	}
 )

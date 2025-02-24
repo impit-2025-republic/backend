@@ -9,6 +9,7 @@ FROM alpine:latest AS production
 
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /src/bin /app
+COPY --from=builder /src/docs /app/docs
 
 WORKDIR /app
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2

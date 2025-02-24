@@ -16,6 +16,7 @@ type (
 		EndDate         time.Time `gorm:"not null"`
 		Location        string    `gorm:"size:255"`
 		CreatorID       *uint     `gorm:"index"`
+		Points          *int
 		MaxParticipants int
 		Status          string    `gorm:"size:20;default:active"`
 		CreatedAt       time.Time `gorm:"default:CURRENT_TIMESTAMP"`
@@ -23,7 +24,6 @@ type (
 		DeletedAt       gorm.DeletedAt `gorm:"index"`
 
 		Creator           *User              `gorm:"foreignKey:CreatorID"`
-		EventTasks        []EventTask        `gorm:"foreignKey:EventID"`
 		EventParticipants []EventParticipant `gorm:"foreignKey:EventID"`
 		TaskCompletions   []TaskCompletion   `gorm:"foreignKey:EventID"`
 		Categories        []EventCategory    `gorm:"many2many:event_category_mappings"`
