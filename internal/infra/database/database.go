@@ -2,6 +2,7 @@ package database
 
 import (
 	"b8boost/backend/config"
+	"b8boost/backend/internal/adapters/repo"
 	"fmt"
 
 	"gorm.io/driver/postgres"
@@ -14,5 +15,6 @@ func NewGormDB(conf config.Config) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+	repo.Migrate(db)
 	return db
 }
