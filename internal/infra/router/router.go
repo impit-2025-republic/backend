@@ -6,10 +6,13 @@ import (
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
 	"b8boost/backend/internal/usecase"
+	"net/http"
 
 	_ "b8boost/backend/docs"
 
 	"github.com/gin-gonic/gin"
+
+	cors "github.com/rs/cors/wrapper/gin"
 	files "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
@@ -41,6 +44,16 @@ func NewRouterHTTP(
 
 func (r *RouterHTTP) Listen() {
 	r.SetupRoutes()
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:      []string{"*"}, //TODO Edit
+		AllowPrivateNetwork: true,
+		AllowedMethods:      []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodOptions, http.MethodDelete, http.MethodPatch},
+		AllowCredentials:    true,
+	})
+
+	r.router.Use(c)
+
 	r.router.Static("/docs", "./docs")
 	r.router.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler, ginSwagger.URL("/docs/swagger.yaml")))
 	r.router.Run(":8080")
