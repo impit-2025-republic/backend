@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend-service
-        image: ghcr.io/impit-2025-republic/backend-main:latest:latest
+        image: ghcr.io/impit-2025-republic/backend-main:latest
         env:
         - name: JWT_PRIVATE_KEY
           valueFrom:
