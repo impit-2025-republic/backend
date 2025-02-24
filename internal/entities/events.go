@@ -7,11 +7,15 @@ import (
 )
 
 type (
+	EventRepo interface {
+		GetUpcomingEvents() ([]Event, error)
+	}
 	Event struct {
 		ID              uint      `gorm:"primaryKey"`
 		Title           string    `gorm:"size:200;not null"`
 		Description     string    `gorm:"type:text"`
 		EventType       string    `gorm:"size:50;not null"`
+		EventStatus     string    `gorm:"size:50;not null"`
 		StartDate       time.Time `gorm:"not null"`
 		EndDate         time.Time `gorm:"not null"`
 		Location        string    `gorm:"size:255"`

@@ -5,11 +5,49 @@ definitions:
       token:
         type: string
     type: object
+  usecase.UpcomingEventList:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/usecase.UpcomingEventOutput'
+        type: array
+      total:
+        type: integer
+    type: object
+  usecase.UpcomingEventOutput:
+    properties:
+      eventStatus:
+        type: string
+      id:
+        type: integer
+      points:
+        type: integer
+      startDate:
+        type: string
+      title:
+        type: string
+    type: object
 info:
   contact: {}
   title: B8boost API
   version: "1.0"
 paths:
+  /events/upcoming:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.UpcomingEventList'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: get upcoming events
+      tags:
+      - events
   /login:
     post:
       produces:
