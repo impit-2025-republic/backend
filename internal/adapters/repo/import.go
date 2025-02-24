@@ -10,7 +10,6 @@ func Migrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&entities.User{},
 		&entities.Event{},
-		&entities.EventTask{},
 		&entities.EventParticipant{},
 		&entities.TaskCompletion{},
 		&entities.UserAchievement{},
