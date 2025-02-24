@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
 - deployment.yaml
 images:
+- name: ghcr.io/impit-2025-republic/backend-main
+  newTag: ca7de2b
 - name: ghcr.io/impit-2025-republic/backend-main-main
   newTag: bfafb7c
 - name: ghcr.io/impit-2025-republic/backend-main:latest
