@@ -31,7 +31,7 @@ spec:
             secretKeyRef:
               name: database-secrets
               key: port
-        - name: DATABASE_PORT
+        - name: DATABASE_USER
           valueFrom:
             secretKeyRef:
               name: database-secrets
