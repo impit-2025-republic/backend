@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-service
+  template:
+    metadata:
+      labels:
+        app: backend-service
+    spec:
+      containers:
+      - name: backend-service
+        image: ghcr.io/impit-2025-republic/backend-main:latest:latest
+        env:
+        - name: JWT_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: private-key
+        - name: DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: host
+        - name: DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: port
+        - name: DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: password
+        - name: DATABASE_DB
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: db
+        - name: BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bot-secrets
+              key: token
+        - name: LDAP_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: server
+        - name: LDAP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: port
+        - name: LDAP_BIND_DN
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: bind-dn
+        - name: LDAP_BIND_PASS
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: bind-pass
+        - name: LDAP_BASE_DN
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: base-dn
+        - name: LDAP_USER_FILTER
+          valueFrom:
+            secretKeyRef:
+              name: ldap-secrets
+              key: user-filter
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
