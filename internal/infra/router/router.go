@@ -48,7 +48,7 @@ func (r *RouterHTTP) Listen() {
 	r.SetupRoutes()
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:      []string{"*"}, //TODO Edit
+		// AllowedOrigins:      []string{"*"}, //TODO Edit
 		AllowPrivateNetwork: true,
 		AllowedMethods:      []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodOptions, http.MethodDelete, http.MethodPatch},
 		AllowCredentials:    true,
