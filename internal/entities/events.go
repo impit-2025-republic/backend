@@ -9,6 +9,7 @@ import (
 type (
 	EventRepo interface {
 		GetUpcomingEvents() ([]Event, error)
+		CreateEvent(event Event) error
 	}
 	Event struct {
 		ID              uint      `gorm:"primaryKey"`
@@ -27,9 +28,9 @@ type (
 		UpdatedAt       time.Time
 		DeletedAt       gorm.DeletedAt `gorm:"index"`
 
-		Creator           *User              `gorm:"foreignKey:CreatorID"`
-		EventParticipants []EventParticipant `gorm:"foreignKey:EventID"`
-		TaskCompletions   []TaskCompletion   `gorm:"foreignKey:EventID"`
-		Categories        []EventCategory    `gorm:"many2many:event_category_mappings"`
+		Creator *User `gorm:"foreignKey:CreatorID"`
+		// EventParticipants []EventParticipant `gorm:"foreignKey:EventID"`
+		// TaskCompletions   []TaskCompletion   `gorm:"foreignKey:EventID"`
+		// Categories        []EventCategory    `gorm:"many2many:event_category_mappings"`
 	}
 )

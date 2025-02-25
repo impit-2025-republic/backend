@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  usecase.CreateEventOutput:
+    properties:
+      id:
+        type: integer
+    type: object
   usecase.LoginOutput:
     properties:
       token:
@@ -32,6 +37,22 @@ info:
   title: B8boost API
   version: "1.0"
 paths:
+  /events:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.CreateEventOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: create event
+      tags:
+      - events
   /events/upcoming:
     get:
       produces:

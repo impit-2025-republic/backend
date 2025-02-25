@@ -25,3 +25,7 @@ func (r eventRepo) GetUpcomingEvents() ([]entities.Event, error) {
 	}
 	return events, nil
 }
+
+func (r eventRepo) CreateEvent(event entities.Event) error {
+	return r.db.Create(&event).Error
+}

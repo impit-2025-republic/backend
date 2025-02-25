@@ -9,6 +9,7 @@ import (
 type (
 	UserRepo interface {
 		GetByUID(uid string) (User, error)
+		GetByID(id uint) (User, error)
 	}
 	User struct {
 		ID         uint   `gorm:"primaryKey"`

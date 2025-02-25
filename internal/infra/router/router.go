@@ -6,6 +6,8 @@ import (
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
 	"b8boost/backend/internal/usecase"
+	"context"
+	"encoding/json"
 	"net/http"
 
 	_ "b8boost/backend/docs"
@@ -62,7 +64,42 @@ func (r *RouterHTTP) Listen() {
 func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
+
+	r.router.POST("/events", r.buildAuthMiddleware(true), r.CreateEvent())
 	// r.router.GET("/jwts", r.buildValidateJwts())
+}
+
+func getJwtClaimsFromIstio(r *http.Request) map[string]interface{} {
+	// Istio передает валидированные данные в заголовке X-JWT-Claims
+	jwtClaimsHeader := r.Header.Get("X-JWT-Claims")
+
+	var claims map[string]interface{}
+	if jwtClaimsHeader != "" {
+		// Парсим JSON из заголовка
+		err := json.Unmarshal([]byte(jwtClaimsHeader), &claims)
+		if err != nil {
+			return nil
+		}
+	}
+
+	return claims
+}
+
+func (g RouterHTTP) buildAuthMiddleware(isService bool) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		const logKey = "authorization_middleware"
+		claims := getJwtClaimsFromIstio(c.Request)
+		audince := claims["aud"].(string)
+		if audince != "api-audience" {
+			//TODO keycloak
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid audience"})
+		}
+		type contextKey string
+		const userIDKey contextKey = "userID"
+		ctx := context.WithValue(c.Request.Context(), userIDKey, claims["sub"])
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
 }
 
 // @Summary		login with telegram
@@ -102,6 +139,27 @@ func (r *RouterHTTP) GetUpcomingEvents() gin.HandlerFunc {
 				repo.NewEventRepo(r.db),
 			)
 			act = action.NewUpcomingEventsAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		create event
+// @Tags			events
+// @Security		BearerAuth
+// @Produce		json
+// @Success		200		{object}	usecase.CreateEventOutput
+// @Failure		500
+// @Router			/events [post]
+func (r *RouterHTTP) CreateEvent() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewCreateEventInteractor(
+				repo.NewEventRepo(r.db),
+				repo.NewUserRepo(r.db),
+			)
+			act = action.NewCreateEventAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)
