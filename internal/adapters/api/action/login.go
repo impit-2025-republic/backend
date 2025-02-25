@@ -20,7 +20,6 @@ func (a LoginAction) Execute(w http.ResponseWriter, r *http.Request) {
 	initData := strings.Split(r.Header.Get("Authorization"), " ")
 
 	var input usecase.LoginInput
-	fmt.Println(initData)
 	if len(initData) == 2 {
 		input.InitData = initData[1]
 	}

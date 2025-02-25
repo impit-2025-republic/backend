@@ -67,12 +67,13 @@ func (uc loginInteractor) Execute(ctx context.Context, input LoginInput) (LoginO
 	uid := ldap.GetFirstValueOrDefault(userData, "uid", "")
 
 	if uid == "" {
-		return LoginOutput{}, errors.New("user_not_found")
+		return LoginOutput{}, errors.New("user_not_found1")
 	}
 
 	user, err := uc.userRepo.GetByUID(uid)
 	if err != nil {
-		return LoginOutput{}, errors.New("user_not_found")
+		fmt.Println(err)
+		return LoginOutput{}, errors.New("user_not_found2")
 	}
 
 	token, err := uc.jwt.Generate(fmt.Sprintf("%d", user.ID))

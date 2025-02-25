@@ -45,10 +45,12 @@ func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
 
 	sr, err := l.conn.Search(searchRequest)
 	if err != nil {
+		fmt.Println(err)
 		return nil
 	}
 
 	if len(sr.Entries) != 1 {
+		fmt.Println("zero")
 		return nil
 	}
 
