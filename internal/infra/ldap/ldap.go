@@ -34,12 +34,12 @@ func NewLDAP(conf config.Config) LDAP {
 type LDAPUserData map[string][]string
 
 func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
-	searchFilter := fmt.Sprintf(l.LDAPUserFilter, ldap.EscapeFilter(fmt.Sprintf("%d", tgID)))
+	searchFilter := fmt.Sprintf("(&(objectClass=inetOrgPerson)(description=%s))", ldap.EscapeFilter(fmt.Sprintf("%d", tgID)))
 	searchRequest := ldap.NewSearchRequest(
-		l.LDAPBaseDN,
+		"ou=users,dc=sso,dc=b8st,dc=ru",
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		searchFilter,
-		[]string{"dn"},
+		[]string{"dn", "cn", "description", "uid"},
 		nil,
 	)
 
