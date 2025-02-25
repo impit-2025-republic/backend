@@ -29,6 +29,7 @@ func (a LoginAction) Execute(w http.ResponseWriter, r *http.Request) {
 	output, err := a.uc.Execute(r.Context(), input)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
