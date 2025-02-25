@@ -65,8 +65,8 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
 
-	r.router.POST("/events", r.buildAuthMiddleware(true), r.CreateEvent())
-	// r.router.GET("/jwts", r.buildValidateJwts())
+	r.router.POST("/events", r.buildAuthMiddleware(), r.CreateEvent())
+	r.router.GET("/jwts", r.buildValidateJwts())
 }
 
 func getJwtClaimsFromIstio(r *http.Request) map[string]interface{} {
@@ -85,9 +85,8 @@ func getJwtClaimsFromIstio(r *http.Request) map[string]interface{} {
 	return claims
 }
 
-func (g RouterHTTP) buildAuthMiddleware(isService bool) gin.HandlerFunc {
+func (g RouterHTTP) buildAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const logKey = "authorization_middleware"
 		claims := getJwtClaimsFromIstio(c.Request)
 		audince := claims["aud"].(string)
 		if audince != "api-audience" {
@@ -166,13 +165,13 @@ func (r *RouterHTTP) CreateEvent() gin.HandlerFunc {
 	}
 }
 
-// func (r *RouterHTTP) buildValidateJwts() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		var (
-// 			uc  = usecase.NewFindJwtsInteractor(r.jwt)
-// 			act = action.NewFindJwtsAction(uc)
-// 		)
+func (r *RouterHTTP) buildValidateJwts() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc  = usecase.NewFindJwtsInteractor(r.jwt)
+			act = action.NewFindJwtsAction(uc)
+		)
 
-// 		act.Execute(c.Writer, c.Request)
-// 	}
-// }
+		act.Execute(c.Writer, c.Request)
+	}
+}
