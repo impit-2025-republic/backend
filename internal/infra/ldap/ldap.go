@@ -8,32 +8,41 @@ import (
 )
 
 type LDAP struct {
-	conn           *ldap.Conn
 	LDAPUserFilter string
 	LDAPBaseDN     string
+	LDAPServer     string
+	LDAPPort       string
+	LDAPBindDN     string
+	LDAPBindPass   string
 }
 
 func NewLDAP(conf config.Config) LDAP {
-	l, err := ldap.DialURL(fmt.Sprintf("%s:%s", conf.LDAPServer, conf.LDAPPort))
+	return LDAP{
+		LDAPServer:   conf.LDAPServer,
+		LDAPPort:     conf.LDAPPort,
+		LDAPBindDN:   conf.LDAPBindDN,
+		LDAPBindPass: conf.LDAPBindPass,
+	}
+}
+
+func (la LDAP) Connect() *ldap.Conn {
+	l, err := ldap.DialURL(fmt.Sprintf("%s:%s", la.LDAPServer, la.LDAPPort))
 	if err != nil {
 		panic(err)
 	}
 	defer l.Close()
 
-	err = l.Bind(conf.LDAPBindDN, conf.LDAPBindPass)
+	err = l.Bind(la.LDAPBindDN, la.LDAPBindPass)
 	if err != nil {
 		panic(err)
 	}
-	return LDAP{
-		conn:           l,
-		LDAPUserFilter: conf.LDAPUserFilter,
-		LDAPBaseDN:     conf.LDAPBaseDN,
-	}
+	return l
 }
 
 type LDAPUserData map[string][]string
 
 func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
+	conn := l.Connect()
 	searchFilter := fmt.Sprintf("(&(objectClass=inetOrgPerson)(description=%s))", ldap.EscapeFilter(fmt.Sprintf("%d", tgID)))
 	searchRequest := ldap.NewSearchRequest(
 		"ou=users,dc=sso,dc=b8st,dc=ru",
@@ -43,7 +52,7 @@ func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
 		nil,
 	)
 
-	sr, err := l.conn.Search(searchRequest)
+	sr, err := conn.Search(searchRequest)
 	if err != nil {
 		fmt.Println(err)
 		return nil
