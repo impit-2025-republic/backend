@@ -30,7 +30,6 @@ func (la LDAP) Connect() *ldap.Conn {
 	if err != nil {
 		panic(err)
 	}
-	defer l.Close()
 
 	err = l.Bind(la.LDAPBindDN, la.LDAPBindPass)
 	if err != nil {
@@ -51,7 +50,7 @@ func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
 		[]string{"dn", "cn", "description", "uid"},
 		nil,
 	)
-
+	defer conn.Close()
 	sr, err := conn.Search(searchRequest)
 	if err != nil {
 		fmt.Println(err)
