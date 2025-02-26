@@ -137,7 +137,6 @@ func (s *Vllm) MakeVLLMRequest(messages []Message, temperature float64) (*http.R
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %v", err)
 	}
-	defer resp.Body.Close()
 
 	return resp, nil
 }
