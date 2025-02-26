@@ -70,6 +70,7 @@ func (r *RouterHTTP) Listen() {
 func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
+	r.router.POST("/events/visit", r.buildAuthMiddleware(r.jwt), r.VisitEventAction())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
 	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
 	r.router.POST("/llm", r.LLMAction())
@@ -136,6 +137,28 @@ func (r *RouterHTTP) Login() gin.HandlerFunc {
 				repo.NewUserRepo(r.db),
 			)
 			act = action.NewLoginAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		visit event
+// @Tags			event
+// @Security		BearerAuth
+// @Produce		json
+// @Param			input	body		usecase.VisitEventInput	true	"input"
+// @Success		200
+// @Failure		500
+// @Router			/events/visit [post]
+func (r *RouterHTTP) VisitEventAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewVisitEventInteractor(
+				repo.NewEventRepo(r.db),
+				repo.NewEventUserVisits(r.db),
+			)
+			act = action.NewVisitEventAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

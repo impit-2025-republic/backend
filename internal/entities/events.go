@@ -16,6 +16,7 @@ type (
 		GetClosedEvents() ([]Event, error)
 		UpdateMany(events []Event) error
 		GetAllEventsOpenAndRunning() ([]Event, error)
+		GetByID(id int) (Event, error)
 	}
 
 	Event struct {

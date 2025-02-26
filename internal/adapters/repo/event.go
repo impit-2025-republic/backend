@@ -87,3 +87,12 @@ func (r eventRepo) UpdateMany(events []entities.Event) error {
 
 	return nil
 }
+
+func (r eventRepo) GetByID(id int) (entities.Event, error) {
+	var event entities.Event
+	err := r.db.Where("event_id = ?", id).Find(&event).Error
+	if err != nil {
+		return entities.Event{}, err
+	}
+	return event, nil
+}
