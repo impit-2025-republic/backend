@@ -127,7 +127,8 @@ func (s ErpSmartService) Sync() {
 		if event.ErpID != nil {
 			existingEvent, err := s.eventRepo.FindByErpID(*event.ErpID)
 			if err == nil {
-				err = s.eventRepo.Update(existingEvent)
+				event.EventID = existingEvent.EventID
+				err = s.eventRepo.Update(event)
 				if err != nil {
 					log.Printf("Ошибка при обновлении события с ErpID %d: %v", *event.ErpID, err)
 					continue
