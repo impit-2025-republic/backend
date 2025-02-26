@@ -8,6 +8,7 @@ import (
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
 	"b8boost/backend/internal/infra/router"
+	"b8boost/backend/internal/infra/tgbot"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
@@ -80,6 +81,11 @@ func (a *app) Cron() *app {
 
 func (a *app) LLM() *app {
 	a.ai = ai.NewVllm(a.cfg.VLLMUrl, a.cfg.VLLMApiKey)
+	return a
+}
+
+func (a *app) TgBot() *app {
+	tgbot.NewTgBot(a.cfg.BotToken).Start()
 	return a
 }
 
