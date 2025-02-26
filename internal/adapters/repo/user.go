@@ -24,7 +24,7 @@ func (r *userRepo) GetByLdapID(entryUUID string) (entities.User, error) {
 
 func (r *userRepo) GetByID(id uint) (entities.User, error) {
 	var user entities.User
-	if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
+	if err := r.db.Where("user_id = ?", id).First(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil

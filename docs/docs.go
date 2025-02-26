@@ -15,8 +15,8 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/events": {
-            "post": {
+        "/events/archived": {
+            "get": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -26,14 +26,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "events"
+                    "event"
                 ],
-                "summary": "create event",
+                "summary": "get archived events",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/usecase.CreateEventOutput"
+                            "$ref": "#/definitions/usecase.ClosedEventsOutput"
                         }
                     },
                     "500": {
@@ -53,7 +53,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "events"
+                    "event"
                 ],
                 "summary": "get upcoming events",
                 "responses": {
@@ -95,14 +95,172 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get user me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.UserMeOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "usecase.CreateEventOutput": {
+        "entities.AchievementType": {
             "type": "object",
             "properties": {
-                "id": {
+                "achievementTypeID": {
                     "type": "integer"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Company": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "type": "string"
+                },
+                "companyID": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Product"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Event": {
+            "type": "object",
+            "properties": {
+                "achievementType": {
+                    "$ref": "#/definitions/entities.AchievementType"
+                },
+                "achievementTypeID": {
+                    "type": "integer"
+                },
+                "coin": {
+                    "type": "number"
+                },
+                "company": {
+                    "$ref": "#/definitions/entities.Company"
+                },
+                "companyID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endDs": {
+                    "type": "string"
+                },
+                "eventID": {
+                    "type": "integer"
+                },
+                "eventName": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "maxUsers": {
+                    "type": "integer"
+                },
+                "startDs": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Product": {
+            "type": "object",
+            "properties": {
+                "avalibility": {
+                    "type": "integer"
+                },
+                "company": {
+                    "$ref": "#/definitions/entities.Company"
+                },
+                "companyID": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "productID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecase.ClosedEventsOutput": {
+            "type": "object",
+            "properties": {
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
                 }
             }
         },
@@ -120,7 +278,7 @@ const docTemplate = `{
                 "events": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/usecase.UpcomingEventOutput"
+                        "$ref": "#/definitions/entities.Event"
                     }
                 },
                 "total": {
@@ -128,23 +286,38 @@ const docTemplate = `{
                 }
             }
         },
-        "usecase.UpcomingEventOutput": {
+        "usecase.UserMeOutput": {
             "type": "object",
             "properties": {
-                "eventStatus": {
+                "birth_date": {
                     "type": "string"
                 },
-                "id": {
+                "coin": {
                     "type": "integer"
                 },
-                "points": {
+                "email": {
+                    "type": "string"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "l_surname": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "integer"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
                 }
             }
         }

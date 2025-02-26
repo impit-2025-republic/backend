@@ -12,6 +12,7 @@ type (
 		Create(user User) error
 		Update(user User) error
 	}
+
 	User struct {
 		UserID      uint       `gorm:"primaryKey;column:user_id;autoIncrement"`
 		TelegramID  *int       `gorm:"column:telegram_id"`

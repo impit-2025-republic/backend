@@ -2,6 +2,7 @@ package router
 
 import (
 	"b8boost/backend/internal/adapters/api/action"
+	"b8boost/backend/internal/adapters/api/middleware"
 	"b8boost/backend/internal/adapters/repo"
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
@@ -64,8 +65,9 @@ func (r *RouterHTTP) Listen() {
 func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
+	r.router.GET("/events/archived", r.GetArchivedEvents())
+	r.router.GET("/users/me", r.buildAuthMiddleware(), r.GetUserMe())
 
-	r.router.POST("/events", r.buildAuthMiddleware(), r.CreateEvent())
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
 
@@ -93,9 +95,8 @@ func (g RouterHTTP) buildAuthMiddleware() gin.HandlerFunc {
 			//TODO keycloak
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid audience"})
 		}
-		type contextKey string
-		const userIDKey contextKey = "userID"
-		ctx := context.WithValue(c.Request.Context(), userIDKey, claims["sub"])
+
+		ctx := context.WithValue(c.Request.Context(), middleware.UserIDKey, claims["sub"])
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
@@ -125,7 +126,7 @@ func (r *RouterHTTP) Login() gin.HandlerFunc {
 }
 
 // @Summary		get upcoming events
-// @Tags			events
+// @Tags			event
 // @Security		BearerAuth
 // @Produce		json
 // @Success		200		{object}	usecase.UpcomingEventList
@@ -144,21 +145,40 @@ func (r *RouterHTTP) GetUpcomingEvents() gin.HandlerFunc {
 	}
 }
 
-// @Summary		create event
-// @Tags			events
+// @Summary		get user me
+// @Tags			user
 // @Security		BearerAuth
 // @Produce		json
-// @Success		200		{object}	usecase.CreateEventOutput
+// @Success		200		{object}	usecase.UserMeOutput
 // @Failure		500
-// @Router			/events [post]
-func (r *RouterHTTP) CreateEvent() gin.HandlerFunc {
+// @Router			/users/me [get]
+func (r *RouterHTTP) GetUserMe() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			uc = usecase.NewCreateEventInteractor(
-				repo.NewEventRepo(r.db),
+			uc = usecase.NewUserMeInteractor(
 				repo.NewUserRepo(r.db),
 			)
-			act = action.NewCreateEventAction(uc)
+			act = action.NewUserMeAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		get archived events
+// @Tags			event
+// @Security		BearerAuth
+// @Produce		json
+// @Success		200		{object}	usecase.ClosedEventsOutput
+// @Failure		500
+// @Router			/events/archived [get]
+func (r *RouterHTTP) GetArchivedEvents() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewClosedEventsInteractor(
+				repo.NewEventRepo(r.db),
+			)
+			act = action.NewClosedEventsAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

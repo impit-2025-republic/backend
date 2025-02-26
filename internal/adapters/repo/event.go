@@ -19,13 +19,18 @@ func NewEventRepo(db *gorm.DB) entities.EventRepo {
 
 func (r eventRepo) GetUpcomingEvents() ([]entities.Event, error) {
 	var events []entities.Event
-	err := r.db.Where("start_date BETWEEN ? AND ?", time.Now(), time.Now().AddDate(0, 0, 5)).Find(&events).Error
+	err := r.db.Where("start_ds BETWEEN ? AND ?", time.Now(), time.Now().AddDate(0, 0, 5)).Find(&events).Error
 	if err != nil {
 		return nil, err
 	}
 	return events, nil
 }
 
-func (r eventRepo) CreateEvent(event entities.Event) error {
-	return r.db.Create(&event).Error
+func (r eventRepo) GetClosedEvents() ([]entities.Event, error) {
+	var events []entities.Event
+	err := r.db.Where("status = 'closed'").Find(&events).Error
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
 }

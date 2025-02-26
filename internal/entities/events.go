@@ -2,35 +2,34 @@ package entities
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type (
 	EventRepo interface {
 		GetUpcomingEvents() ([]Event, error)
-		CreateEvent(event Event) error
+		GetClosedEvents() ([]Event, error)
 	}
-	Event struct {
-		ID              uint      `gorm:"primaryKey"`
-		Title           string    `gorm:"size:200;not null"`
-		Description     string    `gorm:"type:text"`
-		EventType       string    `gorm:"size:50;not null"`
-		EventStatus     string    `gorm:"size:50;not null"`
-		StartDate       time.Time `gorm:"not null"`
-		EndDate         time.Time `gorm:"not null"`
-		Location        string    `gorm:"size:255"`
-		CreatorID       *uint     `gorm:"index"`
-		Points          *int
-		MaxParticipants int
-		Status          string    `gorm:"size:20;default:active"`
-		CreatedAt       time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-		UpdatedAt       time.Time
-		DeletedAt       gorm.DeletedAt `gorm:"index"`
 
-		Creator *User `gorm:"foreignKey:CreatorID"`
-		// EventParticipants []EventParticipant `gorm:"foreignKey:EventID"`
-		// TaskCompletions   []TaskCompletion   `gorm:"foreignKey:EventID"`
-		// Categories        []EventCategory    `gorm:"many2many:event_category_mappings"`
+	Event struct {
+		EventID           int64      `gorm:"column:event_id;primaryKey;autoIncrement"`
+		EventName         string     `gorm:"column:event_name;type:text"`
+		CreatedAt         time.Time  `gorm:"column:created_at;default:CURRENT_TIMESTAMP"`
+		Description       string     `gorm:"column:description;type:text"`
+		Title             string     `gorm:"column:title;type:text"`
+		StartDs           *time.Time `gorm:"column:start_ds"`
+		EndDs             *time.Time `gorm:"column:end_ds"`
+		Status            *string    `gorm:"column:status"`
+		EventType         *string    `gorm:"column:event_type"`
+		MaxUsers          *int       `gorm:"column:max_users"`
+		Coin              float64    `gorm:"column:coin;type:numeric(10,2)"`
+		AchievementTypeID *int       `gorm:"column:achievement_type_id"`
+		CompanyID         *int       `gorm:"column:company_id"`
+
+		AchievementType *AchievementType `gorm:"foreignKey:AchievementTypeID"`
+		Company         *Company         `gorm:"foreignKey:CompanyID"`
 	}
 )
+
+func (Event) TableName() string {
+	return "events"
+}

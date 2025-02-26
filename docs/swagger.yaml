@@ -1,9 +1,95 @@
 basePath: /
 definitions:
-  usecase.CreateEventOutput:
+  entities.AchievementType:
     properties:
-      id:
+      achievementTypeID:
         type: integer
+      events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      name:
+        type: string
+    type: object
+  entities.Company:
+    properties:
+      company:
+        type: string
+      companyID:
+        type: integer
+      description:
+        type: string
+      events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      logo:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/entities.Product'
+        type: array
+      title:
+        type: string
+    type: object
+  entities.Event:
+    properties:
+      achievementType:
+        $ref: '#/definitions/entities.AchievementType'
+      achievementTypeID:
+        type: integer
+      coin:
+        type: number
+      company:
+        $ref: '#/definitions/entities.Company'
+      companyID:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      endDs:
+        type: string
+      eventID:
+        type: integer
+      eventName:
+        type: string
+      eventType:
+        type: string
+      maxUsers:
+        type: integer
+      startDs:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  entities.Product:
+    properties:
+      avalibility:
+        type: integer
+      company:
+        $ref: '#/definitions/entities.Company'
+      companyID:
+        type: integer
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      productID:
+        type: integer
+    type: object
+  usecase.ClosedEventsOutput:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
     type: object
   usecase.LoginOutput:
     properties:
@@ -14,45 +100,55 @@ definitions:
     properties:
       events:
         items:
-          $ref: '#/definitions/usecase.UpcomingEventOutput'
+          $ref: '#/definitions/entities.Event'
         type: array
       total:
         type: integer
     type: object
-  usecase.UpcomingEventOutput:
+  usecase.UserMeOutput:
     properties:
-      eventStatus:
+      birth_date:
         type: string
-      id:
+      coin:
         type: integer
-      points:
+      email:
+        type: string
+      events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      l_surname:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      surname:
+        type: string
+      user_id:
         type: integer
-      startDate:
-        type: string
-      title:
-        type: string
     type: object
 info:
   contact: {}
   title: B8boost API
   version: "1.0"
 paths:
-  /events:
-    post:
+  /events/archived:
+    get:
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/usecase.CreateEventOutput'
+            $ref: '#/definitions/usecase.ClosedEventsOutput'
         "500":
           description: Internal Server Error
       security:
       - BearerAuth: []
-      summary: create event
+      summary: get archived events
       tags:
-      - events
+      - event
   /events/upcoming:
     get:
       produces:
@@ -68,7 +164,7 @@ paths:
       - BearerAuth: []
       summary: get upcoming events
       tags:
-      - events
+      - event
   /login:
     post:
       produces:
@@ -85,6 +181,22 @@ paths:
       summary: login with telegram
       tags:
       - auth
+  /users/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.UserMeOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: get user me
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

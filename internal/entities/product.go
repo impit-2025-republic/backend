@@ -1,23 +1,19 @@
 package entities
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
-
 type (
 	Product struct {
-		ID                uint      `gorm:"primaryKey"`
-		Name              string    `gorm:"size:200;not null"`
-		Description       string    `gorm:"type:text"`
-		Price             float64   `gorm:"type:decimal(10,2);not null"`
-		AvailableQuantity int       `gorm:"default:0"`
-		CreatedAt         time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-		UpdatedAt         time.Time
-		DeletedAt         gorm.DeletedAt `gorm:"index"`
+		ProductID   int     `gorm:"column:product_id;primaryKey;autoIncrement"`
+		CompanyID   *int    `gorm:"column:company_id"`
+		Name        string  `gorm:"column:name;type:character varying(255);not null"`
+		Price       float64 `gorm:"column:price;type:numeric(10,2)"`
+		Description string  `gorm:"column:description;type:text"`
+		Image       string  `gorm:"column:image;type:character varying(255)"`
+		Avalibility *int    `gorm:"column:avalibility"`
 
-		// Relationships
-		Purchases []Purchase `gorm:"foreignKey:ProductID"`
+		Company *Company `gorm:"foreignKey:CompanyID"`
 	}
 )
+
+func (Product) TableName() string {
+	return "product"
+}
