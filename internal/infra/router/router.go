@@ -242,6 +242,9 @@ func (r *RouterHTTP) GetUserMe() gin.HandlerFunc {
 		var (
 			uc = usecase.NewUserMeInteractor(
 				repo.NewUserRepo(r.db),
+				repo.NewUserWallet(r.db),
+				repo.NewEventUserVisits(r.db),
+				repo.NewEventRepo(r.db),
 			)
 			act = action.NewUserMeAction(uc)
 		)

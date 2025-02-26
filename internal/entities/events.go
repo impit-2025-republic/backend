@@ -15,6 +15,7 @@ type (
 		GetUpcomingEvents(period *string) ([]Event, error)
 		GetClosedEvents() ([]Event, error)
 		UpdateMany(events []Event) error
+		GetByEventsIds(eventIds []int) ([]Event, error)
 		GetAllEventsOpenAndRunning() ([]Event, error)
 		GetByID(id int) (Event, error)
 		FindByErpID(erpId int) (Event, error)

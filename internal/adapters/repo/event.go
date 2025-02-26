@@ -84,6 +84,15 @@ func (r eventRepo) GetAllEventsOpenAndRunning() ([]entities.Event, error) {
 	return events, nil
 }
 
+func (r eventRepo) GetByEventsIds(eventIds []int) ([]entities.Event, error) {
+	var events []entities.Event
+	err := r.db.Where("event_id IN (?)", eventIds).Find(&events).Error
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
+}
+
 func (r eventRepo) UpdateMany(events []entities.Event) error {
 	db := r.db
 

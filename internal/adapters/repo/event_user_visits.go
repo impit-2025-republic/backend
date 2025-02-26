@@ -46,3 +46,12 @@ func (r eventUserVisits) GetByEventIDAndVisit(eventID int) ([]entities.EventUser
 	}
 	return events, nil
 }
+
+func (r eventUserVisits) GetByUserID(userID uint) ([]entities.EventUserVisit, error) {
+	var events []entities.EventUserVisit
+	err := r.db.Where("user_id = ?", userID).Find(&events).Error
+	if err != nil {
+		return []entities.EventUserVisit{}, err
+	}
+	return events, nil
+}

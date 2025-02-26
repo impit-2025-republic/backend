@@ -4,6 +4,7 @@ type (
 	EventUserVisitRepo interface {
 		Create(event EventUserVisit) error
 		GetByEventIDAndVisit(eventID int) ([]EventUserVisit, error)
+		GetByUserID(userID uint) ([]EventUserVisit, error)
 		GetByEventIDAndUserID(eventID, userID uint) (EventUserVisit, error)
 		GetByAchievemenTypeIDAndUserIDAndVisited(achievementTypeID int, userID int) ([]EventUserVisit, error)
 	}

@@ -24,24 +24,52 @@ type (
 		Email       *string          `json:"email"`
 		Phone       *string          `json:"phone"`
 		Events      []entities.Event `json:"events"`
-		Coin        int              `json:"coin"`
+		Coin        float64          `json:"coin"`
 	}
 
 	userMeInteractor struct {
-		userRepo entities.UserRepo
+		userRepo           entities.UserRepo
+		userWalletRepo     entities.UserWalletRepo
+		eventUserVisitRepo entities.EventUserVisitRepo
+		eventRepo          entities.EventRepo
 	}
 )
 
 func NewUserMeInteractor(
 	userRepo entities.UserRepo,
+	userWalletRepo entities.UserWalletRepo,
+	eventUserVisitRepo entities.EventUserVisitRepo,
+	eventRepo entities.EventRepo,
 ) UserMeUseCase {
 	return userMeInteractor{
-		userRepo: userRepo,
+		userRepo:           userRepo,
+		userWalletRepo:     userWalletRepo,
+		eventUserVisitRepo: eventUserVisitRepo,
+		eventRepo:          eventRepo,
 	}
 }
 
 func (uc userMeInteractor) Execute(ctx context.Context, input UserMeInput) (UserMeOutput, error) {
 	user, err := uc.userRepo.GetByID(uint(input.UserID))
+	if err != nil {
+		return UserMeOutput{}, err
+	}
+
+	wallet, err := uc.userWalletRepo.GetWallet(user.UserID)
+	if err != nil {
+		return UserMeOutput{}, err
+	}
+	eventsUserVisit, err := uc.eventUserVisitRepo.GetByUserID(user.UserID)
+	if err != nil {
+		return UserMeOutput{}, err
+	}
+
+	var eventIds []int
+	for _, eventsUser := range eventsUserVisit {
+		eventIds = append(eventIds, eventsUser.EventID)
+	}
+
+	events, err := uc.eventRepo.GetByEventsIds(eventIds)
 	if err != nil {
 		return UserMeOutput{}, err
 	}
@@ -54,6 +82,7 @@ func (uc userMeInteractor) Execute(ctx context.Context, input UserMeInput) (User
 		BirthDate:   user.BirthDate,
 		Email:       user.Email,
 		Phone:       user.Phone,
-		Coin:        1,
+		Events:      events,
+		Coin:        wallet.Price,
 	}, nil
 }
