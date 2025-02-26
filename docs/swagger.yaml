@@ -1,5 +1,33 @@
 basePath: /
 definitions:
+  ai.StreamResponse:
+    properties:
+      choices:
+        items:
+          properties:
+            finish_reason:
+              type: string
+            index:
+              type: integer
+            logprobs:
+              type: string
+            stop_reason:
+              type: string
+            text:
+              type: string
+          type: object
+        type: array
+      created:
+        type: integer
+      id:
+        type: string
+      model:
+        type: string
+      object:
+        type: string
+      usage:
+        type: string
+    type: object
   entities.AchievementType:
     properties:
       achievementTypeID:
@@ -91,6 +119,11 @@ definitions:
           $ref: '#/definitions/entities.Event'
         type: array
     type: object
+  usecase.LLMChatInput:
+    properties:
+      promnt:
+        type: string
+    type: object
   usecase.LoginOutput:
     properties:
       token:
@@ -165,6 +198,29 @@ paths:
       summary: get upcoming events
       tags:
       - event
+  /llm:
+    post:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.LLMChatInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ai.StreamResponse'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: chat with llm
+      tags:
+      - llm
   /login:
     post:
       produces:

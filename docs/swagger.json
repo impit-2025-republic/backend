@@ -61,6 +61,44 @@
                 }
             }
         },
+        "/llm": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "llm"
+                ],
+                "summary": "chat with llm",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.LLMChatInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ai.StreamResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "security": [
@@ -117,6 +155,49 @@
         }
     },
     "definitions": {
+        "ai.StreamResponse": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "finish_reason": {
+                                "type": "string"
+                            },
+                            "index": {
+                                "type": "integer"
+                            },
+                            "logprobs": {
+                                "type": "string"
+                            },
+                            "stop_reason": {
+                                "type": "string"
+                            },
+                            "text": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "usage": {
+                    "type": "string"
+                }
+            }
+        },
         "entities.AchievementType": {
             "type": "object",
             "properties": {
@@ -253,6 +334,14 @@
                     "items": {
                         "$ref": "#/definitions/entities.Event"
                     }
+                }
+            }
+        },
+        "usecase.LLMChatInput": {
+            "type": "object",
+            "properties": {
+                "promnt": {
+                    "type": "string"
                 }
             }
         },
