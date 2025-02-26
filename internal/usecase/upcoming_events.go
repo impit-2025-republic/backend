@@ -7,12 +7,16 @@ import (
 
 type (
 	UpcomingEventsUseCase interface {
-		Execute(ctx context.Context) (UpcomingEventList, error)
+		Execute(ctx context.Context, input UpcomingEventInput) (UpcomingEventList, error)
+	}
+
+	UpcomingEventInput struct {
+		Period *string `json:"period" validate:"oneof=today tomorrow week month"`
 	}
 
 	UpcomingEventList struct {
 		Events []entities.Event `json:"events"`
-		Total  int              `json:"total"`
+		Total  int              `json:"total" `
 	}
 
 	upcomingEventsInteractor struct {
@@ -26,8 +30,8 @@ func NewUpcomingEventsInteractor(eventsRepo entities.EventRepo) UpcomingEventsUs
 	}
 }
 
-func (uc upcomingEventsInteractor) Execute(ctx context.Context) (UpcomingEventList, error) {
-	events, err := uc.eventsRepo.GetUpcomingEvents()
+func (uc upcomingEventsInteractor) Execute(ctx context.Context, input UpcomingEventInput) (UpcomingEventList, error) {
+	events, err := uc.eventsRepo.GetUpcomingEvents(input.Period)
 	if err != nil {
 		return UpcomingEventList{}, err
 	}

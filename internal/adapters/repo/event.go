@@ -17,11 +17,59 @@ func NewEventRepo(db *gorm.DB) entities.EventRepo {
 	}
 }
 
-func (r eventRepo) GetUpcomingEvents() ([]entities.Event, error) {
+func (r eventRepo) GetUpcomingEvents(period *string) ([]entities.Event, error) {
 	var events []entities.Event
-	err := r.db.Where("start_ds BETWEEN ? AND ?", time.Now(), time.Now().AddDate(0, 0, 5)).Find(&events).Error
-	if err != nil {
-		return nil, err
+	if period != nil {
+		per := *period
+		switch per {
+		case "today":
+			today := time.Now().Truncate(24 * time.Hour)
+			tomorrow := today.AddDate(0, 0, 1)
+
+			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, tomorrow).Find(&events).Error
+			if err != nil {
+				return nil, err
+			}
+		case "tomorrow":
+			tomorrow := time.Now().Truncate(24*time.Hour).AddDate(0, 0, 1)
+			dayAfterTomorrow := tomorrow.AddDate(0, 0, 1)
+
+			err := r.db.Where("start_ds >= ? AND start_ds < ?", tomorrow, dayAfterTomorrow).Find(&events).Error
+			if err != nil {
+				return nil, err
+			}
+		case "week":
+			now := time.Now()
+			today := now.Truncate(24 * time.Hour)
+
+			daysUntilMonday := int((8 - int(now.Weekday())) % 7)
+			if daysUntilMonday == 0 {
+				daysUntilMonday = 7
+			}
+
+			nextWeekStart := today.AddDate(0, 0, daysUntilMonday)
+
+			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, nextWeekStart).Find(&events).Error
+			if err != nil {
+				return nil, err
+			}
+		case "month":
+			now := time.Now()
+
+			today := now.Truncate(24 * time.Hour)
+
+			nextMonthStart := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, now.Location())
+
+			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, nextMonthStart).Find(&events).Error
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		err := r.db.Where("start_ds BETWEEN ? AND ?", time.Now(), time.Now().AddDate(0, 0, 5)).Find(&events).Error
+		if err != nil {
+			return nil, err
+		}
 	}
 	return events, nil
 }

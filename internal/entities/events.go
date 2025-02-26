@@ -12,7 +12,7 @@ const (
 
 type (
 	EventRepo interface {
-		GetUpcomingEvents() ([]Event, error)
+		GetUpcomingEvents(period *string) ([]Event, error)
 		GetClosedEvents() ([]Event, error)
 		UpdateMany(events []Event) error
 		GetAllEventsOpenAndRunning() ([]Event, error)

@@ -15,7 +15,13 @@ func NewUpcomingEventsAction(uc usecase.UpcomingEventsUseCase) UpcomingEventsAct
 }
 
 func (a UpcomingEventsAction) Execute(w http.ResponseWriter, r *http.Request) {
-	output, err := a.uc.Execute(r.Context())
+	var input usecase.UpcomingEventInput
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	output, err := a.uc.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
