@@ -27,7 +27,7 @@ func NewCron(db *gorm.DB, ldap ldap.LDAP, cfg config.Config) Cron {
 
 func (c Cron) Start() {
 	checkout := cron.New(cron.WithLocation(time.Local))
-	checkout.AddFunc("*/15 * * * *", func() {
+	checkout.AddFunc("*/1 * * * *", func() {
 		service := service.NewLDAPService(
 			c.ldap,
 			repo.NewUserRepo(c.db),
