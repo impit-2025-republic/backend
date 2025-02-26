@@ -3,6 +3,7 @@ package ldap
 import (
 	"b8boost/backend/config"
 	"fmt"
+	"strconv"
 
 	"github.com/go-ldap/ldap/v3"
 )
@@ -77,4 +78,52 @@ func GetFirstValueOrDefault(data LDAPUserData, key, defaultValue string) string 
 		return values[0]
 	}
 	return defaultValue
+}
+
+func GetFirstValueOrDefaultInt(data LDAPUserData, key string, defaultValue int) int {
+	if values, exists := data[key]; exists && len(values) > 0 {
+		val, err := strconv.Atoi(values[0])
+		if err != nil {
+			return defaultValue
+		}
+		return val
+	}
+	return defaultValue
+}
+
+func GetFirstValueOrDefaultPtr(data LDAPUserData, key string, defaultValue *string) *string {
+	if values, exists := data[key]; exists && len(values) > 0 {
+		return &values[0]
+	}
+	return defaultValue
+}
+
+func (l LDAP) FetchAllUsers() ([]LDAPUserData, error) {
+	conn := l.Connect()
+	defer conn.Close()
+	searchFilter := "(&(objectClass=inetOrgPerson))"
+	searchRequest := ldap.NewSearchRequest(
+		"ou=users,dc=sso,dc=b8st,dc=ru",
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		searchFilter,
+		[]string{"dn", "cn", "description", "uid", "mobile", "sn", "givenName", "createTimestamp", "modifyTimestamp"},
+		nil,
+	)
+
+	sr, err := conn.Search(searchRequest)
+	if err != nil {
+		return nil, fmt.Errorf("LDAP search error: %w", err)
+	}
+
+	var users []LDAPUserData
+	for _, entry := range sr.Entries {
+		userData := make(LDAPUserData)
+		for _, attr := range entry.Attributes {
+			userData[attr.Name] = attr.Values
+		}
+		userData["dn"] = []string{entry.DN}
+		users = append(users, userData)
+	}
+
+	return users, nil
 }

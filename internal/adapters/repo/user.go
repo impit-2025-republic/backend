@@ -29,3 +29,21 @@ func (r *userRepo) GetByID(id uint) (entities.User, error) {
 	}
 	return user, nil
 }
+
+func (r *userRepo) GetAll() ([]entities.User, error) {
+	var users []entities.User
+	if err := r.db.Find(&users).Error; err != nil {
+		return users, err
+	}
+
+	return users, nil
+}
+
+func (r *userRepo) Create(user entities.User) error {
+	return r.db.Create(&user).Error
+}
+
+// Update implements entities.UserRepo.
+func (r *userRepo) Update(user entities.User) error {
+	return r.db.Save(&user).Error
+}

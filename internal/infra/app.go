@@ -2,6 +2,7 @@ package infra
 
 import (
 	"b8boost/backend/config"
+	"b8boost/backend/internal/infra/cron"
 	"b8boost/backend/internal/infra/database"
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
@@ -66,6 +67,12 @@ func (a *app) Ldap() *app {
 
 func (a *app) Serve() *app {
 	a.router = router.NewRouterHTTP(a.jwt, a.cfg.BotToken, a.ldap, a.db)
+	return a
+}
+
+func (a *app) Cron() *app {
+	cron := cron.NewCron(a.db, a.ldap)
+	cron.Start()
 	return a
 }
 

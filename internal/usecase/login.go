@@ -76,7 +76,7 @@ func (uc loginInteractor) Execute(ctx context.Context, input LoginInput) (LoginO
 		return LoginOutput{}, errors.New("user_not_found2")
 	}
 
-	token, err := uc.jwt.Generate(fmt.Sprintf("%d", user.ID))
+	token, err := uc.jwt.Generate(fmt.Sprintf("%d", user.UserID))
 	if err != nil {
 		return LoginOutput{}, errors.New("token_generation_error")
 	}

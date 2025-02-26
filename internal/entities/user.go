@@ -2,34 +2,37 @@ package entities
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type (
 	UserRepo interface {
 		GetByUID(uid string) (User, error)
 		GetByID(id uint) (User, error)
+		GetAll() ([]User, error)
+		Create(user User) error
+		Update(user User) error
 	}
 	User struct {
-		ID         uint   `gorm:"primaryKey"`
-		Uid        string `gorm:"uid"`
-		TelegramID *int   `gorm:"unique;not null"`
-
-		Role             string    `gorm:"size:20;not null"`
-		RegistrationDate time.Time `gorm:"default:CURRENT_TIMESTAMP"`
-		LastLogin        *time.Time
-		CreatedAt        time.Time
-		OrganizationID   *uint `gorm:"index"`
-		UpdatedAt        time.Time
-		DeletedAt        gorm.DeletedAt `gorm:"index"`
-
-		// Relationships
-		Organization      *Organization      `gorm:"foreignKey:OrganizationID"`
-		CreatedEvents     []Event            `gorm:"foreignKey:CreatorID"`
-		EventParticipants []EventParticipant `gorm:"foreignKey:UserID"`
-		TaskCompletions   []TaskCompletion   `gorm:"foreignKey:UserID"`
-		Achievements      []UserAchievement  `gorm:"foreignKey:UserID"`
-		Purchases         []Purchase         `gorm:"foreignKey:UserID"`
+		UserID      uint       `gorm:"primaryKey;column:user_id;autoIncrement"`
+		TelegramID  *int       `gorm:"column:telegram_id"`
+		Surname     *string    `gorm:"column:surname;type:varchar(255)"`
+		Name        *string    `gorm:"column:name;type:varchar(255)"`
+		LastSurname *string    `gorm:"column:last_surname;type:varchar(255)"`
+		BirthDate   *time.Time `gorm:"column:birth_date;type:date"`
+		Role        *string    `gorm:"column:role;type:varchar(100)"`
+		CompanyID   *int       `gorm:"column:company_id"`
+		CreatedAt   time.Time  `gorm:"column:created_at;type:timestamp;default:CURRENT_TIMESTAMP"`
+		UpdatedAt   *time.Time `gorm:"column:updated_at;type:timestamp"`
+		Description *string    `gorm:"column:description;type:text"`
+		Avatar      *string    `gorm:"column:avatar;type:varchar(255)"`
+		LastLogin   *time.Time `gorm:"column:last_login;type:timestamp"`
+		IsOnline    *bool      `gorm:"column:is_online"`
+		Email       string     `gorm:"column:email;type:varchar(255);uniqueIndex"`
+		Phone       *string    `gorm:"column:phone;type:varchar(100)"`
+		UID         string     `gorm:"column:uid"`
 	}
 )
+
+func (User) TableName() string {
+	return "users"
+}

@@ -17,6 +17,8 @@ type Config struct {
 	LDAPBindPass   string `env:"LDAP_BIND_PASS" env-default:"admin"`
 	LDAPBaseDN     string `env:"LDAP_BASE_DN" env-default:"dc=example,dc=com"`
 	LDAPUserFilter string `env:"LDAP_USER_FILTER" env-default:"(objectClass=inetOrgPerson)"`
+
+	KeycloakServer string `env:"KEYCLOAK_SERVER"`
 }
 
 func NewLoadConfig() (Config, error) {
