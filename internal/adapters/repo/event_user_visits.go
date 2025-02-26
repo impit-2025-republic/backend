@@ -37,3 +37,12 @@ func (r eventUserVisits) GetByAchievemenTypeIDAndUserIDAndVisited(achievementTyp
 	}
 	return events, nil
 }
+
+func (r eventUserVisits) GetByEventIDAndVisit(eventID int) ([]entities.EventUserVisit, error) {
+	var events []entities.EventUserVisit
+	err := r.db.Where("event_id = ? AND visit = 'attended'", eventID).Find(&events).Error
+	if err != nil {
+		return []entities.EventUserVisit{}, err
+	}
+	return events, nil
+}

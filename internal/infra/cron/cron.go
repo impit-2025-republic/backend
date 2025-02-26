@@ -25,12 +25,18 @@ func NewCron(db *gorm.DB, ldap ldap.LDAP) Cron {
 func (c Cron) Start() {
 	checkout := cron.New(cron.WithLocation(time.Local))
 	checkout.AddFunc("*/15 * * * *", func() {
-		service := service.NewLDAPService(c.ldap, repo.NewUserRepo(c.db))
+		service := service.NewLDAPService(
+			c.ldap,
+			repo.NewUserRepo(c.db),
+			repo.NewUserWallet(c.db))
 		service.Sync()
 	})
 
 	checkout.AddFunc("*/5 * * * *", func() {
-		service := service.NewEventStatusService(repo.NewEventRepo(c.db))
+		service := service.NewEventStatusService(
+			repo.NewEventRepo(c.db),
+			repo.NewEventUserVisits(c.db),
+			repo.NewUserWallet(c.db))
 		service.Start()
 	})
 

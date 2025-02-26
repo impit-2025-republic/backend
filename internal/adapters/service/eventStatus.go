@@ -6,16 +6,22 @@ import (
 )
 
 type EventStatusService struct {
-	eventRepo entities.EventRepo
+	eventRepo          entities.EventRepo
+	eventUserVisitRepo entities.EventUserVisitRepo
+	userWalletRepo     entities.UserWalletRepo
 }
 
 const ()
 
 func NewEventStatusService(
 	eventRepo entities.EventRepo,
+	eventUserVisitRepo entities.EventUserVisitRepo,
+	userWalletRepo entities.UserWalletRepo,
 ) EventStatusService {
 	return EventStatusService{
-		eventRepo: eventRepo,
+		eventRepo:          eventRepo,
+		eventUserVisitRepo: eventUserVisitRepo,
+		userWalletRepo:     userWalletRepo,
 	}
 }
 
@@ -39,6 +45,18 @@ func (s EventStatusService) Start() {
 			if *event.Status == entities.EventStatusRunning && !now.Before(eventEndDs) {
 				newStatus := entities.EventStatusClosed
 				event.Status = &newStatus
+
+				users, err := s.eventUserVisitRepo.GetByEventIDAndVisit(int(event.EventID))
+				if err != nil {
+					continue
+				}
+
+				var userIds []int
+				for _, user := range users {
+					userIds = append(userIds, user.UserID)
+				}
+
+				s.userWalletRepo.UpBalance(userIds, event.Coin)
 			}
 		}
 	}

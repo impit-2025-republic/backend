@@ -9,7 +9,7 @@ type (
 		GetByLdapID(entryUUID string) (User, error)
 		GetByID(id uint) (User, error)
 		GetAll() ([]User, error)
-		Create(user User) error
+		Create(user User) (User, error)
 		Update(user User) error
 	}
 

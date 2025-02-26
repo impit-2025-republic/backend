@@ -6,20 +6,25 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type LDAPService struct {
-	ldap     ldap.LDAP
-	userRepo entities.UserRepo
+	ldap       ldap.LDAP
+	userRepo   entities.UserRepo
+	userWallet entities.UserWalletRepo
 }
 
 func NewLDAPService(
 	ldap ldap.LDAP,
 	userRepo entities.UserRepo,
+	userWallet entities.UserWalletRepo,
 ) LDAPService {
 	return LDAPService{
-		ldap:     ldap,
-		userRepo: userRepo,
+		ldap:       ldap,
+		userRepo:   userRepo,
+		userWallet: userWallet,
 	}
 }
 
@@ -97,6 +102,7 @@ func (s LDAPService) createUser(ldapUser ldap.LDAPUserData) error {
 	}
 
 	tgId := ldap.GetFirstValueOrDefaultInt(ldapUser, "description", tgDef)
+
 	dbUser.Surname = ldap.GetFirstValueOrDefaultPtr(ldapUser, "sn", dbUser.Surname)
 	dbUser.Email = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mail", dbUser.Email)
 	dbUser.TelegramID = &tgId
@@ -107,7 +113,17 @@ func (s LDAPService) createUser(ldapUser ldap.LDAPUserData) error {
 	dbUser.Phone = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mobile", dbUser.Phone)
 	dbUser.LdapID = ldap.GetFirstValueOrDefault(ldapUser, "entryUUID", "")
 
-	return s.userRepo.Create(dbUser)
+	user, err := s.userRepo.Create(dbUser)
+	if err != nil {
+		return err
+	}
+	if tgId != 0 {
+		s.userWallet.Create(entities.UserWallet{
+			UserID: int(user.UserID),
+			Price:  0.0,
+		})
+	}
+	return nil
 }
 
 func (s LDAPService) updateUser(dbUser entities.User, ldapUser ldap.LDAPUserData) error {
@@ -138,6 +154,15 @@ func (s LDAPService) updateUser(dbUser entities.User, ldapUser ldap.LDAPUserData
 	dbUser.Phone = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mobile", dbUser.Phone)
 	dbUser.LdapID = ldap.GetFirstValueOrDefault(ldapUser, "entryUUID", "")
 
+	if tgId != 0 {
+		_, err := s.userWallet.GetWallet(dbUser.UserID)
+		if err != nil && err == gorm.ErrRecordNotFound {
+			s.userWallet.Create(entities.UserWallet{
+				UserID: int(dbUser.UserID),
+				Price:  0.0,
+			})
+		}
+	}
 	return s.userRepo.Update(dbUser)
 }
 

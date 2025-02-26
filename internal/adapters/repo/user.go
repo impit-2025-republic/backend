@@ -39,11 +39,11 @@ func (r *userRepo) GetAll() ([]entities.User, error) {
 	return users, nil
 }
 
-func (r *userRepo) Create(user entities.User) error {
-	return r.db.Create(&user).Error
+func (r *userRepo) Create(user entities.User) (entities.User, error) {
+	err := r.db.Create(&user).Error
+	return user, err
 }
 
-// Update implements entities.UserRepo.
 func (r *userRepo) Update(user entities.User) error {
 	return r.db.Save(&user).Error
 }
