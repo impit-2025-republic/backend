@@ -41,7 +41,7 @@ func (s LDAPService) Sync() {
 	dbUserMap := make(map[string]entities.User)
 
 	for _, ldapUser := range ldapUsers {
-		uid := ldap.GetFirstValueOrDefault(ldapUser, "uid", "")
+		uid := ldap.GetFirstValueOrDefault(ldapUser, "entryUUID", "")
 		if uid != "" {
 			ldapUserMap[uid] = ldapUser
 		}
