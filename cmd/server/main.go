@@ -18,7 +18,7 @@ func main() {
 		panic(err)
 	}
 
-	app := infra.Config(config).Database().JWT().Ldap().Cron().Serve()
+	app := infra.Config(config).Database().JWT().Ldap().LLM().Cron().Serve()
 
 	app.Start()
 }

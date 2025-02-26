@@ -137,6 +137,30 @@ func (r *RouterHTTP) Login() gin.HandlerFunc {
 	}
 }
 
+// @Summary		chat with llm
+// @Tags			llm
+// @Security		BearerAuth
+// @Produce		json
+// @Param			input	body		usecase.LLMChatInput	true	"input"
+// @Success		200		{object}	ai.StreamResponse
+// @Failure		500
+// @Router			/llm [post]
+func (r *RouterHTTP) LLMAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewLoginInteractor(
+				r.botToken,
+				r.jwt,
+				r.ldap,
+				repo.NewUserRepo(r.db),
+			)
+			act = action.NewLoginAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
 // @Summary		get upcoming events
 // @Tags			event
 // @Security		BearerAuth

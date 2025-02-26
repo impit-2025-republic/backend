@@ -19,6 +19,9 @@ type Config struct {
 	LDAPUserFilter string `env:"LDAP_USER_FILTER" env-default:"(objectClass=inetOrgPerson)"`
 
 	KeycloakServer string `env:"KEYCLOAK_SERVER"`
+
+	VLLMUrl    string `env:"VLLM_URL"`
+	VLLMApiKey string `env:"VLLM_API_KEY"`
 }
 
 func NewLoadConfig() (Config, error) {

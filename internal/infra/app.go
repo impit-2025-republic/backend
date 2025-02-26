@@ -2,6 +2,7 @@ package infra
 
 import (
 	"b8boost/backend/config"
+	"b8boost/backend/internal/infra/ai"
 	"b8boost/backend/internal/infra/cron"
 	"b8boost/backend/internal/infra/database"
 	"b8boost/backend/internal/infra/jwt"
@@ -16,6 +17,7 @@ import (
 )
 
 type app struct {
+	ai     ai.Vllm
 	cfg    config.Config
 	db     *gorm.DB
 	jwt    jwt.JWKSHandler
@@ -73,6 +75,11 @@ func (a *app) Serve() *app {
 func (a *app) Cron() *app {
 	cron := cron.NewCron(a.db, a.ldap)
 	cron.Start()
+	return a
+}
+
+func (a *app) LLM() *app {
+	a.ai = ai.NewVllm(a.cfg.VLLMUrl, a.cfg.VLLMApiKey)
 	return a
 }
 
