@@ -29,5 +29,10 @@ func (c Cron) Start() {
 		service.Sync()
 	})
 
+	checkout.AddFunc("*/5 * * * *", func() {
+		service := service.NewEventStatusService(repo.NewEventRepo(c.db))
+		service.Start()
+	})
+
 	checkout.Start()
 }

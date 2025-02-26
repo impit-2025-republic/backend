@@ -4,10 +4,18 @@ import (
 	"time"
 )
 
+const (
+	EventStatusOpen    = "open"
+	EventStatusClosed  = "closed"
+	EventStatusRunning = "running"
+)
+
 type (
 	EventRepo interface {
 		GetUpcomingEvents() ([]Event, error)
 		GetClosedEvents() ([]Event, error)
+		UpdateMany(events []Event) error
+		GetAllEventsOpenAndRunning() ([]Event, error)
 	}
 
 	Event struct {
