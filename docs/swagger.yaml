@@ -161,6 +161,11 @@ definitions:
       user_id:
         type: integer
     type: object
+  usecase.VisitEventInput:
+    properties:
+      eventID:
+        type: integer
+    type: object
 info:
   contact: {}
   title: B8boost API
@@ -196,6 +201,27 @@ paths:
       security:
       - BearerAuth: []
       summary: get upcoming events
+      tags:
+      - event
+  /events/visit:
+    post:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.VisitEventInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: visit event
       tags:
       - event
   /llm:
