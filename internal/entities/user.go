@@ -6,7 +6,7 @@ import (
 
 type (
 	UserRepo interface {
-		GetByUID(uid string) (User, error)
+		GetByLdapID(entryUUID string) (User, error)
 		GetByID(id uint) (User, error)
 		GetAll() ([]User, error)
 		Create(user User) error
@@ -29,7 +29,7 @@ type (
 		IsOnline    *bool      `gorm:"column:is_online"`
 		Email       string     `gorm:"column:email;type:varchar(255);uniqueIndex"`
 		Phone       *string    `gorm:"column:phone;type:varchar(100)"`
-		UID         string     `gorm:"column:uid"`
+		LdapID      string     `gorm:"column:ldap_id"`
 	}
 )
 

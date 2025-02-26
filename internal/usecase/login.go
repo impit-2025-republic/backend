@@ -64,13 +64,13 @@ func (uc loginInteractor) Execute(ctx context.Context, input LoginInput) (LoginO
 		return LoginOutput{}, errors.New("user_not_found")
 	}
 
-	uid := ldap.GetFirstValueOrDefault(userData, "uid", "")
+	entryUUID := ldap.GetFirstValueOrDefault(userData, "entryUUID", "")
 
-	if uid == "" {
+	if entryUUID == "" {
 		return LoginOutput{}, errors.New("user_not_found1")
 	}
 
-	user, err := uc.userRepo.GetByUID(uid)
+	user, err := uc.userRepo.GetByLdapID(entryUUID)
 	if err != nil {
 		fmt.Println(err)
 		return LoginOutput{}, errors.New("user_not_found2")

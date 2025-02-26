@@ -48,7 +48,7 @@ func (l LDAP) FindTelegramID(tgID int64) LDAPUserData {
 		"ou=users,dc=sso,dc=b8st,dc=ru",
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		searchFilter,
-		[]string{"dn", "cn", "description", "uid"},
+		[]string{"dn", "cn", "description", "uid", "entryUUID"},
 		nil,
 	)
 	defer conn.Close()
@@ -98,6 +98,18 @@ func GetFirstValueOrDefaultPtr(data LDAPUserData, key string, defaultValue *stri
 	return defaultValue
 }
 
+// func (l LDAP) CreateUser() error {
+
+// }
+
+// func (l LDAP) FindRoles() error {
+
+// }
+
+// func (l LDAP) FindCompany(uid string) error {
+
+// }
+
 func (l LDAP) FetchAllUsers() ([]LDAPUserData, error) {
 	conn := l.Connect()
 	defer conn.Close()
@@ -106,7 +118,7 @@ func (l LDAP) FetchAllUsers() ([]LDAPUserData, error) {
 		"ou=users,dc=sso,dc=b8st,dc=ru",
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		searchFilter,
-		[]string{"dn", "cn", "description", "uid", "mobile", "sn", "givenName", "createTimestamp", "modifyTimestamp"},
+		[]string{"dn", "cn", "description", "uid", "mobile", "sn", "givenName", "createTimestamp", "modifyTimestamp", "entryUUID"},
 		nil,
 	)
 

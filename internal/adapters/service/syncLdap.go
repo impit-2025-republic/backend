@@ -48,7 +48,7 @@ func (s LDAPService) Sync() {
 	}
 
 	for i := range dbUsers {
-		dbUserMap[dbUsers[i].UID] = dbUsers[i]
+		dbUserMap[dbUsers[i].LdapID] = dbUsers[i]
 	}
 
 	for uid, ldapUser := range ldapUserMap {
@@ -105,7 +105,7 @@ func (s LDAPService) createUser(ldapUser ldap.LDAPUserData) error {
 	dbUser.CreatedAt = createdAt
 	dbUser.UpdatedAt = &updatedAt
 	dbUser.Phone = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mobile", dbUser.Phone)
-	dbUser.UID = ldap.GetFirstValueOrDefault(ldapUser, "uid", "")
+	dbUser.LdapID = ldap.GetFirstValueOrDefault(ldapUser, "entryUUID", "")
 
 	return s.userRepo.Create(dbUser)
 }
@@ -136,7 +136,7 @@ func (s LDAPService) updateUser(dbUser entities.User, ldapUser ldap.LDAPUserData
 	dbUser.CreatedAt = createdAt
 	dbUser.UpdatedAt = &updatedAt
 	dbUser.Phone = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mobile", dbUser.Phone)
-	dbUser.UID = ldap.GetFirstValueOrDefault(ldapUser, "uid", "")
+	dbUser.LdapID = ldap.GetFirstValueOrDefault(ldapUser, "entryUUID", "")
 
 	return s.userRepo.Update(dbUser)
 }

@@ -14,9 +14,9 @@ func NewUserRepo(db *gorm.DB) entities.UserRepo {
 	return &userRepo{db: db}
 }
 
-func (r *userRepo) GetByUID(uid string) (entities.User, error) {
+func (r *userRepo) GetByLdapID(entryUUID string) (entities.User, error) {
 	var user entities.User
-	if err := r.db.Where("uid = ?", uid).First(&user).Error; err != nil {
+	if err := r.db.Where("ldap_id = ?", entryUUID).First(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
