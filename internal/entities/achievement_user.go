@@ -11,3 +11,7 @@ type (
 		AchievementID int `gorm:"column:achievement_id"`
 	}
 )
+
+func (AchievementUser) TableName() string {
+	return "user_achievement"
+}
