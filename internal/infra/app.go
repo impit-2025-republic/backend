@@ -68,7 +68,7 @@ func (a *app) Ldap() *app {
 }
 
 func (a *app) Serve() *app {
-	a.router = router.NewRouterHTTP(a.jwt, a.cfg.BotToken, a.ldap, a.db)
+	a.router = router.NewRouterHTTP(a.jwt, a.cfg.BotToken, a.ldap, a.db, a.ai)
 	return a
 }
 

@@ -4,6 +4,7 @@ import (
 	"b8boost/backend/internal/adapters/api/action"
 	"b8boost/backend/internal/adapters/api/middleware"
 	"b8boost/backend/internal/adapters/repo"
+	"b8boost/backend/internal/infra/ai"
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
 	"b8boost/backend/internal/usecase"
@@ -23,6 +24,7 @@ import (
 )
 
 type RouterHTTP struct {
+	ai       ai.Vllm
 	jwt      jwt.JWKSHandler
 	router   *gin.Engine
 	botToken string
@@ -35,6 +37,7 @@ func NewRouterHTTP(
 	botToken string,
 	ldap ldap.LDAP,
 	db *gorm.DB,
+	ai ai.Vllm,
 ) RouterHTTP {
 	router := gin.Default()
 	return RouterHTTP{
@@ -43,6 +46,7 @@ func NewRouterHTTP(
 		botToken: botToken,
 		ldap:     ldap,
 		db:       db,
+		ai:       ai,
 	}
 }
 
@@ -149,13 +153,10 @@ func (r *RouterHTTP) Login() gin.HandlerFunc {
 func (r *RouterHTTP) LLMAction() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			uc = usecase.NewLoginInteractor(
-				r.botToken,
-				r.jwt,
-				r.ldap,
-				repo.NewUserRepo(r.db),
+			uc = usecase.NewLLmChatInteractor(
+				r.ai,
 			)
-			act = action.NewLoginAction(uc)
+			act = action.NewLLMChatAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)
