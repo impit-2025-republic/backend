@@ -43,5 +43,5 @@ func (b tgBot) handleStart(c tele.Context) error {
 
 func (b tgBot) Start() {
 	b.bot.Handle("/start", b.handleStart)
-	go b.Start()
+	go b.bot.Start()
 }
