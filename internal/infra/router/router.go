@@ -8,8 +8,9 @@ import (
 	"b8boost/backend/internal/infra/ldap"
 	"b8boost/backend/internal/usecase"
 	"context"
-	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	_ "b8boost/backend/docs"
 
@@ -66,37 +67,48 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
-	r.router.GET("/users/me", r.buildAuthMiddleware(), r.GetUserMe())
+	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
 
-func getJwtClaimsFromIstio(r *http.Request) map[string]interface{} {
-	// Istio передает валидированные данные в заголовке X-JWT-Claims
-	jwtClaimsHeader := r.Header.Get("X-JWT-Claims")
+func getJwtClaimsFromIstio(r *http.Request, jwtClaims jwt.JWKSHandler) *jwt.Claims {
+	header := r.Header.Get("Authorization")
+	fmt.Println(header)
 
-	var claims map[string]interface{}
-	if jwtClaimsHeader != "" {
-		// Парсим JSON из заголовка
-		err := json.Unmarshal([]byte(jwtClaimsHeader), &claims)
+	var authHeader string
+	initData := strings.Split(r.Header.Get("Authorization"), " ")
+
+	if len(initData) == 2 {
+		authHeader = initData[1]
+	}
+
+	var claimsJwt *jwt.Claims
+	if authHeader != "" {
+		claims, err := jwtClaims.Verify(authHeader)
 		if err != nil {
 			return nil
 		}
+		claimsJwt = claims
+		// err := json.Unmarshal([]byte(authHeader), &claims)
+		// if err != nil {
+		// 	return nil
+		// }
 	}
 
-	return claims
+	return claimsJwt
 }
 
-func (g RouterHTTP) buildAuthMiddleware() gin.HandlerFunc {
+func (g RouterHTTP) buildAuthMiddleware(jwt jwt.JWKSHandler) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims := getJwtClaimsFromIstio(c.Request)
-		audince := claims["aud"].(string)
-		if audince != "api-audience" {
-			//TODO keycloak
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid audience"})
-		}
+		claims := getJwtClaimsFromIstio(c.Request, jwt)
+		// audince := claims.Audience
+		// if audince{
+		// 	//TODO keycloak
+		// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid audience"})
+		// }
 
-		ctx := context.WithValue(c.Request.Context(), middleware.UserIDKey, claims["sub"])
+		ctx := context.WithValue(c.Request.Context(), middleware.UserIDKey, claims.Subject)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
