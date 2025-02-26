@@ -73,7 +73,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/events/visit", r.buildAuthMiddleware(r.jwt), r.VisitEventAction())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
 	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
-	r.router.GET("/admin/events/visit", r.AdminVisitEventAction())
+	r.router.POST("/admin/events/visit", r.AdminVisitEventAction())
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
