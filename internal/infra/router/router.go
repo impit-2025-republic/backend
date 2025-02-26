@@ -68,6 +68,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
 	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
+	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
