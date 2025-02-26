@@ -111,7 +111,6 @@ func (s ErpSmartService) Sync() {
 		eventType := "task"
 
 		event := entities.Event{
-			EventID:     int64(task.ID),
 			EventName:   task.Name,
 			CreatedAt:   task.CreatedAt,
 			Description: desc,
@@ -130,10 +129,6 @@ func (s ErpSmartService) Sync() {
 		if event.ErpID != nil {
 			existingEvent, err := s.eventRepo.FindByErpID(*event.ErpID)
 			if err != nil && err == gorm.ErrRecordNotFound {
-				originalID := existingEvent.EventID
-
-				existingEvent.EventID = originalID
-
 				err = s.eventRepo.Update(existingEvent)
 				if err != nil {
 					log.Printf("Ошибка при обновлении события с ErpID %d: %v", *event.ErpID, err)
