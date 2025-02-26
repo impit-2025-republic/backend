@@ -106,7 +106,8 @@ func (s ErpSmartService) Sync() {
 			desc = *task.Description
 		}
 
-		eventType := task.BoardListName
+		status = task.BoardListName
+		eventType := "task"
 
 		event := entities.Event{
 			EventName:   task.Name,
