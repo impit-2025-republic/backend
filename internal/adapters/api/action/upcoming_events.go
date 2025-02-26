@@ -1,9 +1,11 @@
 package action
 
 import (
+	"b8boost/backend/internal/adapters/api/middleware"
 	"b8boost/backend/internal/usecase"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type UpcomingEventsAction struct {
@@ -21,6 +23,18 @@ func (a UpcomingEventsAction) Execute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	ctx := r.Context()
+	userIdStr, ok := ctx.Value(middleware.UserIDKey).(string)
+	if ok {
+		userID, err := strconv.Atoi(userIdStr)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		input.UserID = &userID
+	}
+
 	output, err := a.uc.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

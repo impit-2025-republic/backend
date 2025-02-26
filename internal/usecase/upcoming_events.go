@@ -13,21 +13,32 @@ type (
 
 	UpcomingEventInput struct {
 		Period *string `json:"period" validate:"oneof=today tomorrow week month"`
+		UserID *int
+	}
+
+	EventWithRegistration struct {
+		entities.Event
+		IsRegistered bool `json:"is_registered"`
 	}
 
 	UpcomingEventList struct {
-		Events []entities.Event `json:"events"`
-		Total  int              `json:"total" `
+		Events []EventWithRegistration `json:"events"`
+		Total  int                     `json:"total"`
 	}
 
 	upcomingEventsInteractor struct {
-		eventsRepo entities.EventRepo
+		eventsRepo      entities.EventRepo
+		eventUserVisits entities.EventUserVisitRepo
 	}
 )
 
-func NewUpcomingEventsInteractor(eventsRepo entities.EventRepo) UpcomingEventsUseCase {
+func NewUpcomingEventsInteractor(
+	eventsRepo entities.EventRepo,
+	eventUserVisits entities.EventUserVisitRepo,
+) UpcomingEventsUseCase {
 	return upcomingEventsInteractor{
-		eventsRepo: eventsRepo,
+		eventsRepo:      eventsRepo,
+		eventUserVisits: eventUserVisits,
 	}
 }
 
@@ -38,8 +49,39 @@ func (uc upcomingEventsInteractor) Execute(ctx context.Context, input UpcomingEv
 		return UpcomingEventList{}, err
 	}
 
+	eventsWithRegistration := make([]EventWithRegistration, 0, len(events))
+
+	if input.UserID != nil {
+
+		userVisits, err := uc.eventUserVisits.GetByUserID(uint(*input.UserID))
+		if err != nil {
+			return UpcomingEventList{}, err
+		}
+
+		registrationMap := make(map[uint]bool)
+		for _, visit := range userVisits {
+			registrationMap[uint(visit.EventID)] = true
+		}
+
+		for _, event := range events {
+			isRegistered := registrationMap[uint(event.EventID)]
+			eventsWithRegistration = append(eventsWithRegistration, EventWithRegistration{
+				Event:        event,
+				IsRegistered: isRegistered,
+			})
+		}
+	} else {
+
+		for _, event := range events {
+			eventsWithRegistration = append(eventsWithRegistration, EventWithRegistration{
+				Event:        event,
+				IsRegistered: false,
+			})
+		}
+	}
+
 	return UpcomingEventList{
-		Events: events,
-		Total:  len(events),
+		Events: eventsWithRegistration,
+		Total:  len(eventsWithRegistration),
 	}, nil
 }

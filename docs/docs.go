@@ -443,6 +443,62 @@ const docTemplate = `{
                 }
             }
         },
+        "usecase.EventWithRegistration": {
+            "type": "object",
+            "properties": {
+                "achievementType": {
+                    "$ref": "#/definitions/entities.AchievementType"
+                },
+                "achievementTypeID": {
+                    "type": "integer"
+                },
+                "coin": {
+                    "type": "number"
+                },
+                "company": {
+                    "$ref": "#/definitions/entities.Company"
+                },
+                "companyID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endDs": {
+                    "type": "string"
+                },
+                "erpID": {
+                    "type": "integer"
+                },
+                "eventID": {
+                    "type": "integer"
+                },
+                "eventName": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "is_registered": {
+                    "type": "boolean"
+                },
+                "maxUsers": {
+                    "type": "integer"
+                },
+                "startDs": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "usecase.LLMChatInput": {
             "type": "object",
             "properties": {
@@ -470,6 +526,9 @@ const docTemplate = `{
                         "week",
                         "month"
                     ]
+                },
+                "userID": {
+                    "type": "integer"
                 }
             }
         },
@@ -479,7 +538,7 @@ const docTemplate = `{
                 "events": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.Event"
+                        "$ref": "#/definitions/usecase.EventWithRegistration"
                     }
                 },
                 "total": {

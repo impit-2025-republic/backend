@@ -69,7 +69,7 @@ func (r *RouterHTTP) Listen() {
 
 func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/login", r.Login())
-	r.router.GET("/events/upcoming", r.GetUpcomingEvents())
+	r.router.GET("/events/upcoming", r.buildAuthMiddleware(r.jwt), r.GetUpcomingEvents())
 	r.router.POST("/events/visit", r.buildAuthMiddleware(r.jwt), r.VisitEventAction())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
 	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
@@ -223,6 +223,7 @@ func (r *RouterHTTP) GetUpcomingEvents() gin.HandlerFunc {
 		var (
 			uc = usecase.NewUpcomingEventsInteractor(
 				repo.NewEventRepo(r.db),
+				repo.NewEventUserVisits(r.db),
 			)
 			act = action.NewUpcomingEventsAction(uc)
 		)
