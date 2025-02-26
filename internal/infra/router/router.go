@@ -73,6 +73,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/events/visit", r.buildAuthMiddleware(r.jwt), r.VisitEventAction())
 	r.router.GET("/events/archived", r.GetArchivedEvents())
 	r.router.GET("/users/me", r.buildAuthMiddleware(r.jwt), r.GetUserMe())
+	r.router.GET("/admin/events/visit", r.AdminVisitEventAction())
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
@@ -159,6 +160,29 @@ func (r *RouterHTTP) VisitEventAction() gin.HandlerFunc {
 				repo.NewEventUserVisits(r.db),
 			)
 			act = action.NewVisitEventAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		admin visit event
+// @Tags			event
+// @Security		BearerAuth
+// @Produce		json
+// @Param			input	body		usecase.AdminVisitEventInput	true	"input"
+// @Success		200
+// @Failure		500
+// @Router			/admin/events/visit [post]
+func (r *RouterHTTP) AdminVisitEventAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewAdminVisitEventInteractor(
+				repo.NewEventUserVisits(r.db),
+				repo.NewachievementUserRepo(r.db),
+				repo.NewAchievementRepo(r.db),
+			)
+			act = action.NewAdminVisitEventAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

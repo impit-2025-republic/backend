@@ -112,6 +112,15 @@ definitions:
       productID:
         type: integer
     type: object
+  usecase.AdminVisitEventInput:
+    properties:
+      achievement_type_id:
+        type: integer
+      eventID:
+        type: integer
+      userID:
+        type: integer
+    type: object
   usecase.ClosedEventsOutput:
     properties:
       events:
@@ -171,6 +180,27 @@ info:
   title: B8boost API
   version: "1.0"
 paths:
+  /admin/events/visit:
+    post:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.AdminVisitEventInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: admin visit event
+      tags:
+      - event
   /events/archived:
     get:
       produces:

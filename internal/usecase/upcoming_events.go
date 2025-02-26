@@ -3,6 +3,7 @@ package usecase
 import (
 	"b8boost/backend/internal/entities"
 	"context"
+	"fmt"
 )
 
 type (
@@ -33,6 +34,7 @@ func NewUpcomingEventsInteractor(eventsRepo entities.EventRepo) UpcomingEventsUs
 func (uc upcomingEventsInteractor) Execute(ctx context.Context, input UpcomingEventInput) (UpcomingEventList, error) {
 	events, err := uc.eventsRepo.GetUpcomingEvents(input.Period)
 	if err != nil {
+		fmt.Println(err)
 		return UpcomingEventList{}, err
 	}
 

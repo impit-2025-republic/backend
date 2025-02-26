@@ -7,6 +7,41 @@
     },
     "basePath": "/",
     "paths": {
+        "/admin/events/visit": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "event"
+                ],
+                "summary": "admin visit event",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.AdminVisitEventInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/events/archived": {
             "get": {
                 "security": [
@@ -357,6 +392,20 @@
                     "type": "number"
                 },
                 "productID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecase.AdminVisitEventInput": {
+            "type": "object",
+            "properties": {
+                "achievement_type_id": {
+                    "type": "integer"
+                },
+                "eventID": {
+                    "type": "integer"
+                },
+                "userID": {
                     "type": "integer"
                 }
             }

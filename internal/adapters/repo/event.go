@@ -19,6 +19,7 @@ func NewEventRepo(db *gorm.DB) entities.EventRepo {
 
 func (r eventRepo) GetUpcomingEvents(period *string) ([]entities.Event, error) {
 	var events []entities.Event
+	var err error
 	if period != nil {
 		per := *period
 		switch per {
@@ -26,18 +27,12 @@ func (r eventRepo) GetUpcomingEvents(period *string) ([]entities.Event, error) {
 			today := time.Now().Truncate(24 * time.Hour)
 			tomorrow := today.AddDate(0, 0, 1)
 
-			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, tomorrow).Find(&events).Error
-			if err != nil {
-				return nil, err
-			}
+			err = r.db.Where("start_ds >= ? AND start_ds < ?", today, tomorrow).Find(&events).Error
 		case "tomorrow":
 			tomorrow := time.Now().Truncate(24*time.Hour).AddDate(0, 0, 1)
 			dayAfterTomorrow := tomorrow.AddDate(0, 0, 1)
 
-			err := r.db.Where("start_ds >= ? AND start_ds < ?", tomorrow, dayAfterTomorrow).Find(&events).Error
-			if err != nil {
-				return nil, err
-			}
+			err = r.db.Where("start_ds >= ? AND start_ds < ?", tomorrow, dayAfterTomorrow).Find(&events).Error
 		case "week":
 			now := time.Now()
 			today := now.Truncate(24 * time.Hour)
@@ -49,10 +44,7 @@ func (r eventRepo) GetUpcomingEvents(period *string) ([]entities.Event, error) {
 
 			nextWeekStart := today.AddDate(0, 0, daysUntilMonday)
 
-			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, nextWeekStart).Find(&events).Error
-			if err != nil {
-				return nil, err
-			}
+			err = r.db.Where("start_ds >= ? AND start_ds < ?", today, nextWeekStart).Find(&events).Error
 		case "month":
 			now := time.Now()
 
@@ -60,10 +52,10 @@ func (r eventRepo) GetUpcomingEvents(period *string) ([]entities.Event, error) {
 
 			nextMonthStart := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, now.Location())
 
-			err := r.db.Where("start_ds >= ? AND start_ds < ?", today, nextMonthStart).Find(&events).Error
-			if err != nil {
-				return nil, err
-			}
+			err = r.db.Where("start_ds >= ? AND start_ds < ?", today, nextMonthStart).Find(&events).Error
+		}
+		if err != nil {
+			return nil, err
 		}
 	} else {
 		err := r.db.Where("start_ds BETWEEN ? AND ?", time.Now(), time.Now().AddDate(0, 0, 5)).Find(&events).Error
