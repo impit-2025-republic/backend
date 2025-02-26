@@ -78,6 +78,8 @@ definitions:
         type: string
       endDs:
         type: string
+      erpID:
+        type: integer
       eventID:
         type: integer
       eventName:
@@ -138,6 +140,16 @@ definitions:
       token:
         type: string
     type: object
+  usecase.UpcomingEventInput:
+    properties:
+      period:
+        enum:
+        - today
+        - tomorrow
+        - week
+        - month
+        type: string
+    type: object
   usecase.UpcomingEventList:
     properties:
       events:
@@ -152,7 +164,7 @@ definitions:
       birth_date:
         type: string
       coin:
-        type: integer
+        type: number
       email:
         type: string
       events:
@@ -219,6 +231,13 @@ paths:
       - event
   /events/upcoming:
     get:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.UpcomingEventInput'
       produces:
       - application/json
       responses:

@@ -91,6 +91,17 @@ const docTemplate = `{
                     "event"
                 ],
                 "summary": "get upcoming events",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.UpcomingEventInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -352,6 +363,9 @@ const docTemplate = `{
                 "endDs": {
                     "type": "string"
                 },
+                "erpID": {
+                    "type": "integer"
+                },
                 "eventID": {
                     "type": "integer"
                 },
@@ -445,6 +459,20 @@ const docTemplate = `{
                 }
             }
         },
+        "usecase.UpcomingEventInput": {
+            "type": "object",
+            "properties": {
+                "period": {
+                    "type": "string",
+                    "enum": [
+                        "today",
+                        "tomorrow",
+                        "week",
+                        "month"
+                    ]
+                }
+            }
+        },
         "usecase.UpcomingEventList": {
             "type": "object",
             "properties": {
@@ -466,7 +494,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "coin": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "email": {
                     "type": "string"

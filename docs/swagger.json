@@ -83,6 +83,17 @@
                     "event"
                 ],
                 "summary": "get upcoming events",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.UpcomingEventInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -344,6 +355,9 @@
                 "endDs": {
                     "type": "string"
                 },
+                "erpID": {
+                    "type": "integer"
+                },
                 "eventID": {
                     "type": "integer"
                 },
@@ -437,6 +451,20 @@
                 }
             }
         },
+        "usecase.UpcomingEventInput": {
+            "type": "object",
+            "properties": {
+                "period": {
+                    "type": "string",
+                    "enum": [
+                        "today",
+                        "tomorrow",
+                        "week",
+                        "month"
+                    ]
+                }
+            }
+        },
         "usecase.UpcomingEventList": {
             "type": "object",
             "properties": {
@@ -458,7 +486,7 @@
                     "type": "string"
                 },
                 "coin": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "email": {
                     "type": "string"
