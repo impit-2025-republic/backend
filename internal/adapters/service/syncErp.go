@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type ErpSmartService struct {
@@ -128,7 +126,7 @@ func (s ErpSmartService) Sync() {
 	for _, event := range events {
 		if event.ErpID != nil {
 			existingEvent, err := s.eventRepo.FindByErpID(*event.ErpID)
-			if err != nil && err == gorm.ErrRecordNotFound {
+			if err == nil {
 				err = s.eventRepo.Update(existingEvent)
 				if err != nil {
 					log.Printf("Ошибка при обновлении события с ErpID %d: %v", *event.ErpID, err)

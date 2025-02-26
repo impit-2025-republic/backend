@@ -41,7 +41,7 @@ func (r userWallet) DownBalance(user_ids []int, price float64) error {
 
 func (r userWallet) GetWallet(userId uint) (entities.UserWallet, error) {
 	var userWallet entities.UserWallet
-	err := r.db.Where("user_id = ?").Find(&userWallet).Error
+	err := r.db.Where("user_id = ?", userId).Find(&userWallet).Error
 	if err != nil {
 		return entities.UserWallet{}, err
 	}
