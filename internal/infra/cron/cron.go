@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"b8boost/backend/config"
 	"b8boost/backend/internal/adapters/repo"
 	"b8boost/backend/internal/adapters/service"
 	"b8boost/backend/internal/infra/ldap"
@@ -13,12 +14,14 @@ import (
 type Cron struct {
 	db   *gorm.DB
 	ldap ldap.LDAP
+	cfg  config.Config
 }
 
-func NewCron(db *gorm.DB, ldap ldap.LDAP) Cron {
+func NewCron(db *gorm.DB, ldap ldap.LDAP, cfg config.Config) Cron {
 	return Cron{
 		db:   db,
 		ldap: ldap,
+		cfg:  cfg,
 	}
 }
 
@@ -38,6 +41,15 @@ func (c Cron) Start() {
 			repo.NewEventUserVisits(c.db),
 			repo.NewUserWallet(c.db))
 		service.Start()
+	})
+
+	checkout.AddFunc("*/1 * * * *", func() {
+		service := service.NewErpSmartService(
+			repo.NewEventRepo(c.db),
+			c.cfg.ERPAccessToken,
+			c.cfg.ERPURL,
+		)
+		service.Sync()
 	})
 
 	checkout.Start()

@@ -136,3 +136,23 @@ func (r eventRepo) GetByID(id int) (entities.Event, error) {
 	}
 	return event, nil
 }
+
+// Create implements entities.EventRepo.
+func (r eventRepo) Create(event entities.Event) error {
+	return r.db.Create(&event).Error
+}
+
+// FindByErpID implements entities.EventRepo.
+func (r eventRepo) FindByErpID(erpId int) (entities.Event, error) {
+	var event entities.Event
+	err := r.db.Where("erp_id = ?", erpId).Find(&event).Error
+	if err != nil {
+		return entities.Event{}, err
+	}
+	return event, nil
+}
+
+// Update implements entities.EventRepo.
+func (r eventRepo) Update(event entities.Event) error {
+	return r.db.Save(&event).Error
+}

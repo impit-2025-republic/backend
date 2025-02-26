@@ -22,6 +22,9 @@ type Config struct {
 
 	VLLMUrl    string `env:"VLLM_URL"`
 	VLLMApiKey string `env:"VLLM_API_KEY"`
+
+	ERPAccessToken string `env:"ERP_ACCESS_TOKEN"`
+	ERPURL         string `env:"ERP_URL"`
 }
 
 func NewLoadConfig() (Config, error) {

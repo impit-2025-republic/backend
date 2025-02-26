@@ -17,6 +17,9 @@ type (
 		UpdateMany(events []Event) error
 		GetAllEventsOpenAndRunning() ([]Event, error)
 		GetByID(id int) (Event, error)
+		FindByErpID(erpId int) (Event, error)
+		Update(event Event) error
+		Create(event Event) error
 	}
 
 	Event struct {
@@ -33,6 +36,7 @@ type (
 		Coin              float64    `gorm:"column:coin;type:numeric(10,2)"`
 		AchievementTypeID *int       `gorm:"column:achievement_type_id"`
 		CompanyID         *int       `gorm:"column:company_id"`
+		ErpID             *int       `gorm:"column:erp_id"`
 
 		AchievementType *AchievementType `gorm:"foreignKey:AchievementTypeID"`
 		Company         *Company         `gorm:"foreignKey:CompanyID"`

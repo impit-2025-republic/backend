@@ -73,7 +73,7 @@ func (a *app) Serve() *app {
 }
 
 func (a *app) Cron() *app {
-	cron := cron.NewCron(a.db, a.ldap)
+	cron := cron.NewCron(a.db, a.ldap, a.cfg)
 	cron.Start()
 	return a
 }
