@@ -27,7 +27,7 @@ type (
 		Avatar      *string    `gorm:"column:avatar;type:varchar(255)"`
 		LastLogin   *time.Time `gorm:"column:last_login;type:timestamp"`
 		IsOnline    *bool      `gorm:"column:is_online"`
-		Email       string     `gorm:"column:email;type:varchar(255);uniqueIndex"`
+		Email       *string    `gorm:"column:email;type:varchar(255)"`
 		Phone       *string    `gorm:"column:phone;type:varchar(100)"`
 		LdapID      string     `gorm:"column:ldap_id"`
 	}

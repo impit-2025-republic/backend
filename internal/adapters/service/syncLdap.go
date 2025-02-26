@@ -98,7 +98,7 @@ func (s LDAPService) createUser(ldapUser ldap.LDAPUserData) error {
 
 	tgId := ldap.GetFirstValueOrDefaultInt(ldapUser, "description", tgDef)
 	dbUser.Surname = ldap.GetFirstValueOrDefaultPtr(ldapUser, "sn", dbUser.Surname)
-	dbUser.Email = ldap.GetFirstValueOrDefault(ldapUser, "mail", dbUser.Email)
+	dbUser.Email = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mail", dbUser.Email)
 	dbUser.TelegramID = &tgId
 	dbUser.Name = ldap.GetFirstValueOrDefaultPtr(ldapUser, "cn", dbUser.Name)
 	dbUser.LastSurname = ldap.GetFirstValueOrDefaultPtr(ldapUser, "givenName", dbUser.LastSurname)
@@ -129,7 +129,7 @@ func (s LDAPService) updateUser(dbUser entities.User, ldapUser ldap.LDAPUserData
 
 	tgId := ldap.GetFirstValueOrDefaultInt(ldapUser, "description", tgDef)
 	dbUser.Surname = ldap.GetFirstValueOrDefaultPtr(ldapUser, "sn", dbUser.Surname)
-	dbUser.Email = ldap.GetFirstValueOrDefault(ldapUser, "mail", dbUser.Email)
+	dbUser.Email = ldap.GetFirstValueOrDefaultPtr(ldapUser, "mail", dbUser.Email)
 	dbUser.TelegramID = &tgId
 	dbUser.Name = ldap.GetFirstValueOrDefaultPtr(ldapUser, "cn", dbUser.Name)
 	dbUser.LastSurname = ldap.GetFirstValueOrDefaultPtr(ldapUser, "givenName", dbUser.LastSurname)
