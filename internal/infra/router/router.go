@@ -77,6 +77,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/products", r.GetProductsAction())
+	r.router.POST("/products/buy", r.GetProductsAction())
 	r.router.POST("/products/open/case", r.CaseOpenAction())
 	r.router.GET("/users/transactions", r.buildAuthMiddleware(r.jwt), r.GetUserTransaction())
 
@@ -196,6 +197,30 @@ func (r *RouterHTTP) AdminVisitEventAction() gin.HandlerFunc {
 	}
 }
 
+// @Summary		buy product
+// @Tags			product
+// @Security		BearerAuth
+// @Produce		json
+// @Param			input	body		usecase.BuyProductInput	true	"input"
+// @Success		200
+// @Failure		500
+// @Router			/products/buy [post]
+func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewBuyProductInteractor(
+				repo.NewProductRepo(r.db),
+				repo.NewUserWinningRepo(r.db),
+				repo.NewUserWallet(r.db),
+				repo.NewUserWalletHistoryRepo(r.db),
+			)
+			act = action.NewCaseOpenAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
 // @Summary		case open
 // @Tags			product
 // @Security		BearerAuth
@@ -212,6 +237,7 @@ func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
 				repo.NewProductRepo(r.db),
 				repo.NewUserWallet(r.db),
 				repo.NewUserWalletHistoryRepo(r.db),
+				repo.NewUserWinningRepo(r.db),
 			)
 			act = action.NewCaseOpenAction(uc)
 		)

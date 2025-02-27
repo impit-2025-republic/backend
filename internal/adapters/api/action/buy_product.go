@@ -9,16 +9,16 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-type CaseOpenAction struct {
-	uc usecase.CaseOpenUseCase
+type BuyProductAction struct {
+	uc usecase.BuyProductUseCase
 }
 
-func NewCaseOpenAction(uc usecase.CaseOpenUseCase) CaseOpenAction {
-	return CaseOpenAction{uc: uc}
+func NewBuyProductAction(uc usecase.BuyProductUseCase) BuyProductAction {
+	return BuyProductAction{uc: uc}
 }
 
-func (a CaseOpenAction) Execute(w http.ResponseWriter, r *http.Request) {
-	var input usecase.CaseOpenInput
+func (a BuyProductAction) Execute(w http.ResponseWriter, r *http.Request) {
+	var input usecase.BuyProductInput
 	if err := binding.Default(r.Method, binding.MIMEPOSTForm).Bind(r, &input); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,14 +32,14 @@ func (a CaseOpenAction) Execute(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		input.UserID = userID
+		input.UserID = uint(userID)
 	}
 
-	output, err := a.uc.Execute(r.Context(), input)
+	err := a.uc.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, output)
+	w.WriteHeader(http.StatusOK)
 }

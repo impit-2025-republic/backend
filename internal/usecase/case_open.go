@@ -28,6 +28,7 @@ type (
 		productRepo                entities.ProductRepo
 		userWalletRepo             entities.UserWalletRepo
 		userHistoryWalletRepo      entities.UserWalletHistoryRepo
+		userWinningRepo            entities.UserWinningRepo
 	}
 )
 
@@ -36,12 +37,14 @@ func NewCaseOpenInteractor(
 	productRepo entities.ProductRepo,
 	userWalletRepo entities.UserWalletRepo,
 	userHistoryWalletRepo entities.UserWalletHistoryRepo,
+	userWinningRepo entities.UserWinningRepo,
 ) CaseOpenUseCase {
 	return caseOpenInteractor{
 		caseProductProbabilityRepo: caseProductProbabilityRepo,
 		productRepo:                productRepo,
 		userWalletRepo:             userWalletRepo,
 		userHistoryWalletRepo:      userHistoryWalletRepo,
+		userWinningRepo:            userWinningRepo,
 	}
 }
 
@@ -93,6 +96,13 @@ func (uc caseOpenInteractor) Execute(ctx context.Context, input CaseOpenInput) (
 	if err != nil {
 		return CaseOpenOutput{}, err
 	}
+
+	uc.userWinningRepo.Create(entities.UserWinning{
+		UserID:    wallet.UserID,
+		ProductID: int(productId),
+		WonAt:     time.Now(),
+		WinType:   "case",
+	})
 
 	return CaseOpenOutput{
 		ProductID: productId,
