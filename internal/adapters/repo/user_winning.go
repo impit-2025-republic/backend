@@ -27,10 +27,10 @@ func (r userWinningRepo) GetMyWinnings(userID uint) ([]struct {
 		Product entities.Product
 	}
 
-	err := r.db.Table("user_winning").
-		Select("user_winning.*, product.*").
-		Joins("JOIN product ON user_winning.product_id = product.product_id").
-		Where("user_winning.user_id = ?", userID).
+	err := r.db.Table("user_winnings").
+		Select("user_winnings.*, product.*").
+		Joins("JOIN product ON user_winnings.product_id = product.product_id").
+		Where("user_winnings.user_id = ?", userID).
 		Scan(&results).Error
 
 	return results, err
