@@ -182,9 +182,12 @@ func (r *RouterHTTP) AdminVisitEventAction() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			uc = usecase.NewAdminVisitEventInteractor(
+				repo.NewEventRepo(r.db),
 				repo.NewEventUserVisits(r.db),
 				repo.NewachievementUserRepo(r.db),
 				repo.NewAchievementRepo(r.db),
+				repo.NewUserWallet(r.db),
+				repo.NewUserWalletHistoryRepo(r.db),
 			)
 			act = action.NewAdminVisitEventAction(uc)
 		)
@@ -246,11 +249,10 @@ func (r *RouterHTTP) LLMAction() gin.HandlerFunc {
 func (r *RouterHTTP) GetUserTransaction() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			uc = usecase.NewUpcomingEventsInteractor(
-				repo.NewEventRepo(r.db),
-				repo.NewEventUserVisits(r.db),
+			uc = usecase.NewGetMyHistoryWalletInteractor(
+				repo.NewUserWalletHistoryRepo(r.db),
 			)
-			act = action.NewUpcomingEventsAction(uc)
+			act = action.NewGetMyHistoryWalletAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

@@ -11,7 +11,7 @@ type (
 		AchievementID     uint       `gorm:"primaryKey;column:achievement_id;autoIncrement"`
 		CompanyID         *int       `gorm:"column:company_id"`
 		Logo              *string    `gorm:"column:logo;type:varchar(255)"`
-		Name              *string    `gorm:"column:name;type:varchar(255)"`
+		Name              string     `gorm:"column:name;type:varchar(255)"`
 		Description       *string    `gorm:"column:description;type:text"`
 		AchievementTypeID *int       `gorm:"column:achievement_type_id"`
 		TreshholdValue    *int       `gorm:"column:treshhold_value"`

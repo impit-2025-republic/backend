@@ -3,6 +3,8 @@ package usecase
 import (
 	"b8boost/backend/internal/entities"
 	"context"
+	"fmt"
+	"time"
 )
 
 type (
@@ -17,25 +19,54 @@ type (
 	}
 
 	adminVisitEventInteractor struct {
-		eventUserVisit    entities.EventUserVisitRepo
-		achivmentUserRepo entities.AchievementUserRepo
-		achievementRepo   entities.AchievementRepo
+		eventRepo             entities.EventRepo
+		eventUserVisit        entities.EventUserVisitRepo
+		achivmentUserRepo     entities.AchievementUserRepo
+		achievementRepo       entities.AchievementRepo
+		userWalletRepo        entities.UserWalletRepo
+		userHistoryWalletRepo entities.UserWalletHistoryRepo
 	}
 )
 
 func NewAdminVisitEventInteractor(
+	eventRepo entities.EventRepo,
 	eventUserVisit entities.EventUserVisitRepo,
 	achivmentUserRepo entities.AchievementUserRepo,
 	achievementRepo entities.AchievementRepo,
+	userWalletRepo entities.UserWalletRepo,
+	userHistoryWalletRepo entities.UserWalletHistoryRepo,
 ) AdminVisitEventUseCase {
 	return adminVisitEventInteractor{
-		eventUserVisit:    eventUserVisit,
-		achivmentUserRepo: achivmentUserRepo,
-		achievementRepo:   achievementRepo,
+		eventRepo:             eventRepo,
+		eventUserVisit:        eventUserVisit,
+		achivmentUserRepo:     achivmentUserRepo,
+		achievementRepo:       achievementRepo,
+		userHistoryWalletRepo: userHistoryWalletRepo,
+		userWalletRepo:        userWalletRepo,
 	}
 }
 
 func (uc adminVisitEventInteractor) Execute(ctx context.Context, input AdminVisitEventInput) error {
+	event, err := uc.eventRepo.GetByID(input.EventID)
+	if err != nil {
+		return err
+	}
+
+	if event.Coin != 0 {
+		wallet, err := uc.userWalletRepo.GetWallet(uint(input.UserID))
+		if err != nil {
+			return err
+		}
+		uc.userWalletRepo.UpBalance([]int{wallet.UserID}, event.Coin)
+		uc.userHistoryWalletRepo.Create(entities.UserWalletHistory{
+			UserID:      input.UserID,
+			Coin:        event.Coin,
+			RefillType:  "plus",
+			Description: fmt.Sprintf("За прохождение мероприятия %s. Вам дали %.2f", event.Title, event.Coin),
+			CreatedAt:   time.Now(),
+		})
+	}
+
 	achievementsUser, err := uc.achivmentUserRepo.GetAll(input.UserID)
 	if err != nil {
 		return err
@@ -74,7 +105,19 @@ func (uc adminVisitEventInteractor) Execute(ctx context.Context, input AdminVisi
 				AchievementID: int(achievement.AchievementID),
 			})
 
-			// TODO give coin
+			wallet, err := uc.userWalletRepo.GetWallet(uint(input.UserID))
+			if err != nil {
+				return err
+			}
+			uc.userWalletRepo.UpBalance([]int{wallet.UserID}, event.Coin)
+			uc.userHistoryWalletRepo.Create(entities.UserWalletHistory{
+				UserID:      input.UserID,
+				Coin:        event.Coin,
+				RefillType:  "plus",
+				Description: fmt.Sprintf("Вы получили достижение %s. Вам дали %.2f", achievement.Name, event.Coin),
+				CreatedAt:   time.Now(),
+			})
+
 		}
 	}
 
