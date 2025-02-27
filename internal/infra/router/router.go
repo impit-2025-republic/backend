@@ -210,6 +210,8 @@ func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
 			uc = usecase.NewCaseOpenInteractor(
 				repo.NewCaseProductProbabilityRepo(r.db),
 				repo.NewProductRepo(r.db),
+				repo.NewUserWallet(r.db),
+				repo.NewUserWalletHistoryRepo(r.db),
 			)
 			act = action.NewCaseOpenAction(uc)
 		)
