@@ -125,6 +125,16 @@ definitions:
       userID:
         type: integer
     type: object
+  usecase.CaseOpenInput:
+    properties:
+      productId:
+        type: integer
+    type: object
+  usecase.CaseOpenOutput:
+    properties:
+      productID:
+        type: integer
+    type: object
   usecase.ClosedEventsOutput:
     properties:
       events:
@@ -360,6 +370,29 @@ paths:
       security:
       - BearerAuth: []
       summary: get products
+      tags:
+      - product
+  /products/open/case:
+    post:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.CaseOpenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.CaseOpenOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: case open
       tags:
       - product
   /users/me:

@@ -22,3 +22,12 @@ func (r productRepo) GetAll() ([]entities.Product, error) {
 	}
 	return products, nil
 }
+
+func (r productRepo) GetByID(productId uint) (entities.Product, error) {
+	var product entities.Product
+	err := r.db.Where("product_id = ?", productId).Find(&product).Error
+	if err != nil {
+		return entities.Product{}, err
+	}
+	return product, nil
+}

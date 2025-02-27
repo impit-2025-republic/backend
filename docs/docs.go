@@ -239,6 +239,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/products/open/case": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "case open",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.CaseOpenInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.CaseOpenOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -455,6 +493,22 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecase.CaseOpenInput": {
+            "type": "object",
+            "properties": {
+                "productId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecase.CaseOpenOutput": {
+            "type": "object",
+            "properties": {
+                "productID": {
                     "type": "integer"
                 }
             }

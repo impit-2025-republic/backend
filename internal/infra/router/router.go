@@ -77,6 +77,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/products", r.GetProductsAction())
+	r.router.POST("/products/open/case", r.CaseOpenAction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
@@ -185,6 +186,28 @@ func (r *RouterHTTP) AdminVisitEventAction() gin.HandlerFunc {
 				repo.NewAchievementRepo(r.db),
 			)
 			act = action.NewAdminVisitEventAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		case open
+// @Tags			product
+// @Security		BearerAuth
+// @Produce		json
+// @Param			input	body		usecase.CaseOpenInput	true	"input"
+// @Success		200 {object} usecase.CaseOpenOutput
+// @Failure		500
+// @Router			/products/open/case [post]
+func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewCaseOpenInteractor(
+				repo.NewCaseProductProbabilityRepo(r.db),
+				repo.NewProductRepo(r.db),
+			)
+			act = action.NewCaseOpenAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

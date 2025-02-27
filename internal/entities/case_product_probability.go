@@ -1,6 +1,10 @@
 package entities
 
 type (
+	CaseProductProbabilityRepo interface {
+		GetAll(caseTypeID uint) ([]CaseProductProbability, error)
+	}
+
 	CaseProductProbability struct {
 		ID              uint    `gorm:"column:id;primaryKey;autoIncrement"`
 		CaseTypeID      uint    `gorm:"column:case_type_id;not null"`
