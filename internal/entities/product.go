@@ -4,6 +4,7 @@ type (
 	ProductRepo interface {
 		GetAll() ([]Product, error)
 		GetByID(productId uint) (Product, error)
+		Update(product Product) error
 	}
 	Product struct {
 		ProductID       uint    `gorm:"column:product_id;primaryKey;autoIncrement"`

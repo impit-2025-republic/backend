@@ -85,5 +85,9 @@ func (uc buyProductInteractor) Execute(ctx context.Context, input BuyProductInpu
 		WinType:   "case",
 	})
 
+	product.Availability = product.Availability - 1
+
+	uc.productRepo.Update(product)
+
 	return nil
 }

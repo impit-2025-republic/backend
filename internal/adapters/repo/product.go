@@ -31,3 +31,7 @@ func (r productRepo) GetByID(productId uint) (entities.Product, error) {
 	}
 	return product, nil
 }
+
+func (r productRepo) Update(product entities.Product) error {
+	return r.db.Save(&product).Error
+}

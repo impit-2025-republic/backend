@@ -3,10 +3,9 @@ package action
 import (
 	"b8boost/backend/internal/adapters/api/middleware"
 	"b8boost/backend/internal/usecase"
+	"encoding/json"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin/binding"
 )
 
 type CaseOpenAction struct {
@@ -19,7 +18,8 @@ func NewCaseOpenAction(uc usecase.CaseOpenUseCase) CaseOpenAction {
 
 func (a CaseOpenAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var input usecase.CaseOpenInput
-	if err := binding.Default(r.Method, binding.MIMEPOSTForm).Bind(r, &input); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

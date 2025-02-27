@@ -3,10 +3,9 @@ package action
 import (
 	"b8boost/backend/internal/adapters/api/middleware"
 	"b8boost/backend/internal/usecase"
+	"encoding/json"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin/binding"
 )
 
 type BuyProductAction struct {
@@ -19,7 +18,8 @@ func NewBuyProductAction(uc usecase.BuyProductUseCase) BuyProductAction {
 
 func (a BuyProductAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var input usecase.BuyProductInput
-	if err := binding.Default(r.Method, binding.MIMEPOSTForm).Bind(r, &input); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -35,7 +35,7 @@ func (a BuyProductAction) Execute(w http.ResponseWriter, r *http.Request) {
 		input.UserID = uint(userID)
 	}
 
-	err := a.uc.Execute(r.Context(), input)
+	err = a.uc.Execute(r.Context(), input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
