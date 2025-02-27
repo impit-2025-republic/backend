@@ -213,8 +213,8 @@ func (r *RouterHTTP) LLMAction() gin.HandlerFunc {
 // @Summary		get upcoming events
 // @Tags			event
 // @Security		BearerAuth
+// @Param			period	query		string	false	"period"
 // @Produce		json
-// @Param			input	body		usecase.UpcomingEventInput	true	"input"
 // @Success		200		{object}	usecase.UpcomingEventList
 // @Failure		500
 // @Router			/events/upcoming [get]

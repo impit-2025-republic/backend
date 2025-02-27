@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin/binding"
 )
 
 type UpcomingEventsAction struct {
@@ -18,8 +20,7 @@ func NewUpcomingEventsAction(uc usecase.UpcomingEventsUseCase) UpcomingEventsAct
 
 func (a UpcomingEventsAction) Execute(w http.ResponseWriter, r *http.Request) {
 	var input usecase.UpcomingEventInput
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
+	if err := binding.Default(r.Method, binding.MIMEPOSTForm).Bind(r, &input); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

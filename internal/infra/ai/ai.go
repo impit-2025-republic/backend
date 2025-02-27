@@ -68,7 +68,7 @@ func (s *Vllm) MakeVLLMIndexes(messages []Message, temperature float64) (string,
 	vllmReq := VLLMRequest{
 		Model:       "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24",
 		Prompt:      prompt,
-		MaxTokens:   2048,
+		MaxTokens:   5022,
 		Temperature: temperature,
 		Stream:      false,
 	}

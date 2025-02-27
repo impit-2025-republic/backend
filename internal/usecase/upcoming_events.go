@@ -12,7 +12,7 @@ type (
 	}
 
 	UpcomingEventInput struct {
-		Period *string `json:"period" validate:"oneof=today tomorrow week month"`
+		Period *string `form:"period" validate:"oneof=today tomorrow week month"`
 		UserID *int
 	}
 

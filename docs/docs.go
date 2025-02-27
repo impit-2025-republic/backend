@@ -93,13 +93,10 @@ const docTemplate = `{
                 "summary": "get upcoming events",
                 "parameters": [
                     {
-                        "description": "input",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/usecase.UpcomingEventInput"
-                        }
+                        "type": "string",
+                        "description": "period",
+                        "name": "period",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -512,23 +509,6 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "usecase.UpcomingEventInput": {
-            "type": "object",
-            "properties": {
-                "period": {
-                    "type": "string",
-                    "enum": [
-                        "today",
-                        "tomorrow",
-                        "week",
-                        "month"
-                    ]
-                },
-                "userID": {
-                    "type": "integer"
                 }
             }
         },

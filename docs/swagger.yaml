@@ -177,18 +177,6 @@ definitions:
       token:
         type: string
     type: object
-  usecase.UpcomingEventInput:
-    properties:
-      period:
-        enum:
-        - today
-        - tomorrow
-        - week
-        - month
-        type: string
-      userID:
-        type: integer
-    type: object
   usecase.UpcomingEventList:
     properties:
       events:
@@ -271,12 +259,10 @@ paths:
   /events/upcoming:
     get:
       parameters:
-      - description: input
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/usecase.UpcomingEventInput'
+      - description: period
+        in: query
+        name: period
+        type: string
       produces:
       - application/json
       responses:
