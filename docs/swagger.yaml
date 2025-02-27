@@ -140,6 +140,13 @@ definitions:
       userID:
         type: integer
     type: object
+  usecase.BuyProductInput:
+    properties:
+      productId:
+        type: integer
+      userID:
+        type: integer
+    type: object
   usecase.CaseOpenInput:
     properties:
       productId:
@@ -392,6 +399,27 @@ paths:
       security:
       - BearerAuth: []
       summary: get products
+      tags:
+      - product
+  /products/buy:
+    post:
+      parameters:
+      - description: input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.BuyProductInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: buy product
       tags:
       - product
   /products/open/case:

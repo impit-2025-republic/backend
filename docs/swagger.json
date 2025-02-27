@@ -231,6 +231,41 @@
                 }
             }
         },
+        "/products/buy": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "buy product",
+                "parameters": [
+                    {
+                        "description": "input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.BuyProductInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/products/open/case": {
             "post": {
                 "security": [
@@ -532,6 +567,17 @@
                     "type": "integer"
                 },
                 "eventID": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecase.BuyProductInput": {
+            "type": "object",
+            "properties": {
+                "productId": {
                     "type": "integer"
                 },
                 "userID": {

@@ -77,7 +77,7 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/products", r.GetProductsAction())
-	r.router.POST("/products/buy", r.GetProductsAction())
+	r.router.POST("/products/buy", r.BuyProductAction())
 	r.router.POST("/products/open/case", r.CaseOpenAction())
 	r.router.GET("/users/transactions", r.buildAuthMiddleware(r.jwt), r.GetUserTransaction())
 
@@ -205,7 +205,7 @@ func (r *RouterHTTP) AdminVisitEventAction() gin.HandlerFunc {
 // @Success		200
 // @Failure		500
 // @Router			/products/buy [post]
-func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
+func (r *RouterHTTP) BuyProductAction() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			uc = usecase.NewBuyProductInteractor(
@@ -214,7 +214,7 @@ func (r *RouterHTTP) CaseOpenAction() gin.HandlerFunc {
 				repo.NewUserWallet(r.db),
 				repo.NewUserWalletHistoryRepo(r.db),
 			)
-			act = action.NewCaseOpenAction(uc)
+			act = action.NewBuyProductAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)
