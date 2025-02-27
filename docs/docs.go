@@ -212,6 +212,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/products": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "get products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.FindProductOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -389,11 +416,11 @@ const docTemplate = `{
         "entities.Product": {
             "type": "object",
             "properties": {
-                "avalibility": {
+                "availability": {
                     "type": "integer"
                 },
-                "company": {
-                    "$ref": "#/definitions/entities.Company"
+                "caseTypeID": {
+                    "type": "integer"
                 },
                 "companyID": {
                     "type": "integer"
@@ -409,6 +436,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                },
+                "productCategory": {
+                    "type": "string"
                 },
                 "productID": {
                     "type": "integer"
@@ -493,6 +523,17 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "usecase.FindProductOutput": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Product"
+                    }
                 }
             }
         },

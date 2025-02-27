@@ -76,6 +76,8 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/admin/events/visit", r.AdminVisitEventAction())
 	r.router.POST("/llm", r.LLMAction())
 
+	r.router.GET("/products", r.GetProductsAction())
+
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
 
@@ -249,6 +251,26 @@ func (r *RouterHTTP) GetUserMe() gin.HandlerFunc {
 				repo.NewEventRepo(r.db),
 			)
 			act = action.NewUserMeAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		get products
+// @Tags			product
+// @Security		BearerAuth
+// @Produce		json
+// @Success		200		{object}	usecase.FindProductOutput
+// @Failure		500
+// @Router			/products [get]
+func (r *RouterHTTP) GetProductsAction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewFindProductInteractor(
+				repo.NewProductRepo(r.db),
+			)
+			act = action.NewFindProductAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

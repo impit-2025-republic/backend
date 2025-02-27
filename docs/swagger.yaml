@@ -97,10 +97,10 @@ definitions:
     type: object
   entities.Product:
     properties:
-      avalibility:
+      availability:
         type: integer
-      company:
-        $ref: '#/definitions/entities.Company'
+      caseTypeID:
+        type: integer
       companyID:
         type: integer
       description:
@@ -111,6 +111,8 @@ definitions:
         type: string
       price:
         type: number
+      productCategory:
+        type: string
       productID:
         type: integer
     type: object
@@ -166,6 +168,13 @@ definitions:
         type: string
       title:
         type: string
+    type: object
+  usecase.FindProductOutput:
+    properties:
+      products:
+        items:
+          $ref: '#/definitions/entities.Product'
+        type: array
     type: object
   usecase.LLMChatInput:
     properties:
@@ -337,6 +346,22 @@ paths:
       summary: login with telegram
       tags:
       - auth
+  /products:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.FindProductOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: get products
+      tags:
+      - product
   /users/me:
     get:
       produces:
