@@ -60,14 +60,13 @@ func (uc loginInteractor) Execute(ctx context.Context, input LoginInput) (LoginO
 
 	userData := uc.ldap.FindTelegramID(data.User.ID)
 
-	if userData == nil {
-		return LoginOutput{}, errors.New("user_not_found")
-	}
+	var entryUUID string = "0"
+	if userData != nil {
+		entryUUID := ldap.GetFirstValueOrDefault(userData, "entryUUID", "")
 
-	entryUUID := ldap.GetFirstValueOrDefault(userData, "entryUUID", "")
-
-	if entryUUID == "" {
-		return LoginOutput{}, errors.New("user_not_found1")
+		if entryUUID == "" {
+			return LoginOutput{}, errors.New("user_not_found1")
+		}
 	}
 
 	user, err := uc.userRepo.GetByLdapID(entryUUID)
