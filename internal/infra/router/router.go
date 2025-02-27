@@ -77,8 +77,8 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/llm", r.LLMAction())
 
 	r.router.GET("/products", r.GetProductsAction())
-	r.router.POST("/products/buy", r.BuyProductAction())
-	r.router.POST("/products/open/case", r.CaseOpenAction())
+	r.router.POST("/products/buy", r.buildAuthMiddleware(r.jwt), r.BuyProductAction())
+	r.router.POST("/products/open/case", r.buildAuthMiddleware(r.jwt), r.CaseOpenAction())
 	r.router.GET("/users/transactions", r.buildAuthMiddleware(r.jwt), r.GetUserTransaction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())

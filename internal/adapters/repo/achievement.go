@@ -18,7 +18,7 @@ func NewAchievementRepo(db *gorm.DB) entities.AchievementRepo {
 
 func (r achievementRepo) GetByNotAchievementTypeIDsAndAchievementTypeIDAndEndDs(achievementTypeIDs []int, achievementTypeID int) ([]entities.Achievement, error) {
 	var achievements []entities.Achievement
-	err := r.db.Where("achievement_id NOT IN (?) AND achievement_type_id = ? AND (end_ds > CURRENT_DATE OR end_ds IS NULL)", achievementTypeIDs, achievementTypeID).Find(&achievements).Error
+	err := r.db.Where("achievement_id NOT IN (?) AND achievement_type_id = ? AND (end_ds > CURRENT_DATE OR end_ds IS NULL)", achievementTypeIDs, achievementTypeID).First(&achievements).Error
 	if err != nil {
 		return nil, err
 	}

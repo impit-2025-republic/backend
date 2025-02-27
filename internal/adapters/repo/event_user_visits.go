@@ -22,7 +22,7 @@ func (r eventUserVisits) Create(event entities.EventUserVisit) error {
 
 func (r eventUserVisits) GetByEventIDAndUserID(eventID uint, userID uint) (entities.EventUserVisit, error) {
 	var event entities.EventUserVisit
-	err := r.db.Where("event_id = ? AND user_id = ?", eventID, userID).Find(&event).Error
+	err := r.db.Where("event_id = ? AND user_id = ?", eventID, userID).First(&event).Error
 	if err != nil {
 		return entities.EventUserVisit{}, err
 	}

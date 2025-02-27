@@ -25,15 +25,17 @@ func (a CaseOpenAction) Execute(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 	userIdStr, ok := ctx.Value(middleware.UserIDKey).(string)
-	if ok {
-		userID, err := strconv.Atoi(userIdStr)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		input.UserID = userID
+	if !ok {
+		http.Error(w, "not_user", http.StatusInternalServerError)
+		return
 	}
+	userID, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	input.UserID = userID
 
 	output, err := a.uc.Execute(r.Context(), input)
 	if err != nil {
