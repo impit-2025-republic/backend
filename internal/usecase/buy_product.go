@@ -70,7 +70,6 @@ func (uc buyProductInteractor) Execute(ctx context.Context, input BuyProductInpu
 			Coin:        product.Price,
 			RefillType:  "minus",
 			Description: fmt.Sprintf("Покупка товара %s. Отняли %.2f", product.Name, product.Price),
-			CreatedAt:   time.Now(),
 		},
 	)
 

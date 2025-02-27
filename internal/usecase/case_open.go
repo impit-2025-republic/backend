@@ -89,7 +89,6 @@ func (uc caseOpenInteractor) Execute(ctx context.Context, input CaseOpenInput) (
 			Coin:        product.Price,
 			RefillType:  "minus",
 			Description: fmt.Sprintf("Открытие кейса %s. Отняли %.2f", product.Name, product.Price),
-			CreatedAt:   time.Now(),
 		},
 	)
 

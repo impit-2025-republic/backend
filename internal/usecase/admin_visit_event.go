@@ -4,7 +4,6 @@ import (
 	"b8boost/backend/internal/entities"
 	"context"
 	"fmt"
-	"time"
 )
 
 type (
@@ -63,7 +62,6 @@ func (uc adminVisitEventInteractor) Execute(ctx context.Context, input AdminVisi
 			Coin:        event.Coin,
 			RefillType:  "plus",
 			Description: fmt.Sprintf("За прохождение мероприятия %s. Вам дали %.2f", event.Title, event.Coin),
-			CreatedAt:   time.Now(),
 		})
 	}
 
@@ -115,7 +113,6 @@ func (uc adminVisitEventInteractor) Execute(ctx context.Context, input AdminVisi
 				Coin:        event.Coin,
 				RefillType:  "plus",
 				Description: fmt.Sprintf("Вы получили достижение %s. Вам дали %.2f", achievement.Name, event.Coin),
-				CreatedAt:   time.Now(),
 			})
 
 		}
