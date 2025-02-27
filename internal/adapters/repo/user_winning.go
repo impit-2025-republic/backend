@@ -15,5 +15,5 @@ func NewUserWinningRepo(db *gorm.DB) entities.UserWinningRepo {
 }
 
 func (r userWinningRepo) Create(history entities.UserWinning) error {
-	return r.db.Create(history).Error
+	return r.db.Create(&history).Error
 }
