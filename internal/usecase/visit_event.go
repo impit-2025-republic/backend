@@ -56,7 +56,7 @@ func (uc visitEventInteractor) Execute(ctx context.Context, input VisitEventInpu
 	eventUserVisit.EventID = input.EventID
 	eventUserVisit.UserID = input.UserID
 	eventUserVisit.Visit = "signed"
-	eventUserVisit.AchievementTypeID = *event.AchievementTypeID
+	eventUserVisit.AchievementTypeID = 1
 
 	err = uc.eventUserVisitsRepo.Create(eventUserVisit)
 	if err != nil {
