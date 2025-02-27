@@ -30,7 +30,7 @@ func (m *JWKSHandler) Generate(user_id string) (string, error) {
 	now := time.Now()
 	claims := Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(24 * 7 * 30 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			Subject:   user_id,
