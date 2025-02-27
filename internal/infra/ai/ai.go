@@ -67,6 +67,7 @@ func (s *Vllm) MakeVLLMIndexes(messages []Message, temperature float64) (string,
 
 	vllmReq := VLLMRequest{
 		Model:       "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24",
+		MaxTokens:   32000,
 		Prompt:      prompt,
 		Temperature: temperature,
 		Stream:      false,
@@ -113,6 +114,7 @@ func (s *Vllm) MakeVLLMRequest(messages []Message, temperature float64) (*http.R
 	vllmReq := VLLMRequest{
 		Model:       "Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24",
 		Prompt:      prompt,
+		MaxTokens:   32000,
 		Temperature: temperature,
 		Stream:      true,
 	}
