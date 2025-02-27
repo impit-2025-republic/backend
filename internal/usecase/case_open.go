@@ -16,6 +16,7 @@ type (
 
 	CaseOpenInput struct {
 		ProductID uint `json:"productId"`
+		UserID    int  `json:"-"`
 	}
 
 	CaseOpenOutput struct {
@@ -25,16 +26,22 @@ type (
 	caseOpenInteractor struct {
 		caseProductProbabilityRepo entities.CaseProductProbabilityRepo
 		productRepo                entities.ProductRepo
+		userWalletRepo             entities.UserWalletRepo
+		userHistoryWalletRepo      entities.UserWalletHistoryRepo
 	}
 )
 
 func NewCaseOpenInteractor(
 	caseProductProbabilityRepo entities.CaseProductProbabilityRepo,
 	productRepo entities.ProductRepo,
+	userWalletRepo entities.UserWalletRepo,
+	userHistoryWalletRepo entities.UserWalletHistoryRepo,
 ) CaseOpenUseCase {
 	return caseOpenInteractor{
 		caseProductProbabilityRepo: caseProductProbabilityRepo,
 		productRepo:                productRepo,
+		userWalletRepo:             userWalletRepo,
+		userHistoryWalletRepo:      userHistoryWalletRepo,
 	}
 }
 
@@ -48,12 +55,40 @@ func (uc caseOpenInteractor) Execute(ctx context.Context, input CaseOpenInput) (
 		return CaseOpenOutput{}, errors.New("is_not_case")
 	}
 
+	wallet, err := uc.userWalletRepo.GetWallet(uint(input.UserID))
+	if err != nil {
+		return CaseOpenOutput{}, err
+	}
+
+	if wallet.Price < product.Price {
+		return CaseOpenOutput{}, errors.New("not_enoungh_coin")
+	}
+
 	products, err := uc.caseProductProbabilityRepo.GetAll(uint(*product.CaseTypeID))
 	if err != nil {
 		return CaseOpenOutput{}, err
 	}
 
 	productId, err := GetRandomProductByProbability(products)
+
+	if err != nil {
+		return CaseOpenOutput{}, err
+	}
+
+	err = uc.userWalletRepo.DownBalance([]int{input.UserID}, product.Price)
+	if err != nil {
+		return CaseOpenOutput{}, err
+	}
+
+	err = uc.userHistoryWalletRepo.Create(
+		entities.UserWalletHistory{
+			UserID:      input.UserID,
+			Coin:        product.Price,
+			RefillType:  "minus",
+			Description: fmt.Sprintf("Открытие кейса %s. Отняли %.2f", product.Name, product.Price),
+			CreatedAt:   time.Now(),
+		},
+	)
 
 	if err != nil {
 		return CaseOpenOutput{}, err
