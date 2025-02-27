@@ -16,7 +16,7 @@ func NewCaseProductProbabilityRepo(db *gorm.DB) entities.CaseProductProbabilityR
 
 func (r caseProductProbabilityRepo) GetAll(caseTypeID uint) ([]entities.CaseProductProbability, error) {
 	var products []entities.CaseProductProbability
-	err := r.db.Find(&products).Error
+	err := r.db.Where("case_type_id = ?", caseTypeID).Find(&products).Error
 	if err != nil {
 		return []entities.CaseProductProbability{}, err
 	}
