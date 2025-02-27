@@ -5,6 +5,10 @@ import "time"
 type (
 	UserWinningRepo interface {
 		Create(winner UserWinning) error
+		GetMyWinnings(userID uint) ([]struct {
+			UserWinning
+			Product Product
+		}, error)
 	}
 
 	UserWinning struct {

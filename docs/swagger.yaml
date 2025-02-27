@@ -120,16 +120,31 @@ definitions:
     properties:
       coin:
         type: number
-      createdAt:
-        type: string
       description:
         type: string
-      id:
-        type: integer
       refillType:
         type: string
       userID:
         type: integer
+    type: object
+  entities.UserWinning:
+    properties:
+      delivered:
+        type: boolean
+      deliveredAt:
+        type: string
+      deliveredBy:
+        type: integer
+      productID:
+        type: integer
+      userID:
+        type: integer
+      userWinningID:
+        type: integer
+      winType:
+        type: string
+      wonAt:
+        type: string
     type: object
   usecase.AdminVisitEventInput:
     properties:
@@ -238,6 +253,10 @@ definitions:
     properties:
       birth_date:
         type: string
+      buys:
+        items:
+          $ref: '#/definitions/usecase.UserWinnings'
+        type: array
       coin:
         type: number
       email:
@@ -256,6 +275,13 @@ definitions:
         type: string
       user_id:
         type: integer
+    type: object
+  usecase.UserWinnings:
+    properties:
+      buy:
+        $ref: '#/definitions/entities.UserWinning'
+      product:
+        $ref: '#/definitions/entities.Product'
     type: object
   usecase.VisitEventInput:
     properties:

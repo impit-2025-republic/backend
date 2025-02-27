@@ -551,20 +551,43 @@ const docTemplate = `{
                 "coin": {
                     "type": "number"
                 },
-                "createdAt": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "refillType": {
                     "type": "string"
                 },
                 "userID": {
                     "type": "integer"
+                }
+            }
+        },
+        "entities.UserWinning": {
+            "type": "object",
+            "properties": {
+                "delivered": {
+                    "type": "boolean"
+                },
+                "deliveredAt": {
+                    "type": "string"
+                },
+                "deliveredBy": {
+                    "type": "integer"
+                },
+                "productID": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "integer"
+                },
+                "userWinningID": {
+                    "type": "integer"
+                },
+                "winType": {
+                    "type": "string"
+                },
+                "wonAt": {
+                    "type": "string"
                 }
             }
         },
@@ -734,6 +757,12 @@ const docTemplate = `{
                 "birth_date": {
                     "type": "string"
                 },
+                "buys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/usecase.UserWinnings"
+                    }
+                },
                 "coin": {
                     "type": "number"
                 },
@@ -760,6 +789,17 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "usecase.UserWinnings": {
+            "type": "object",
+            "properties": {
+                "buy": {
+                    "$ref": "#/definitions/entities.UserWinning"
+                },
+                "product": {
+                    "$ref": "#/definitions/entities.Product"
                 }
             }
         },
