@@ -93,7 +93,7 @@ func (uc llmChatInteractor) Execute(ctx context.Context, input LLMChatInput) (LL
 		Content: indexes,
 	})
 
-	res, err := uc.ai.MakeVLLMRequest(messages, 0.0)
+	res, err := uc.ai.MakeVLLMRequest(messages, 0.3)
 	if err != nil {
 		return LLMChatOutput{}, err
 	}
