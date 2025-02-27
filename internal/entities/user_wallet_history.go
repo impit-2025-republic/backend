@@ -1,7 +1,5 @@
 package entities
 
-import "time"
-
 type (
 	UserWalletHistoryRepo interface {
 		Create(history UserWalletHistory) error
@@ -9,12 +7,11 @@ type (
 	}
 
 	UserWalletHistory struct {
-		ID          uint      `gorm:"column:id;primaryKey;autoIncrement"`
-		UserID      int       `gorm:"column:user_id"`
-		Coin        float64   `gorm:"column:coin;type:numeric(10,2)"`
-		RefillType  string    `gorm:"column:refill_type;type:varchar(255)"`
-		Description string    `gorm:"column:description;type:text"`
-		CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime"`
+		ID          uint    `gorm:"column:id;primaryKey;autoIncrement"`
+		UserID      int     `gorm:"column:user_id"`
+		Coin        float64 `gorm:"column:coin;type:numeric(10,2)"`
+		RefillType  string  `gorm:"column:refill_type;type:varchar(255)"`
+		Description string  `gorm:"column:description;type:text"`
 	}
 )
 
