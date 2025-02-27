@@ -78,6 +78,7 @@ func (r *RouterHTTP) SetupRoutes() {
 
 	r.router.GET("/products", r.GetProductsAction())
 	r.router.POST("/products/open/case", r.CaseOpenAction())
+	r.router.GET("/users/transactions", r.buildAuthMiddleware(r.jwt), r.GetUserTransaction())
 
 	r.router.GET("/jwts", r.buildValidateJwts())
 }
@@ -229,6 +230,27 @@ func (r *RouterHTTP) LLMAction() gin.HandlerFunc {
 				r.ai,
 			)
 			act = action.NewLLMChatAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		get my transaction
+// @Tags			user
+// @Security		BearerAuth
+// @Produce		json
+// @Success		200		{object}	usecase.GetMyHistoryWalletOutput
+// @Failure		500
+// @Router			/users/transactions [get]
+func (r *RouterHTTP) GetUserTransaction() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewUpcomingEventsInteractor(
+				repo.NewEventRepo(r.db),
+				repo.NewEventUserVisits(r.db),
+			)
+			act = action.NewUpcomingEventsAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

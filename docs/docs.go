@@ -303,6 +303,33 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get my transaction",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.GetMyHistoryWalletOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -483,6 +510,29 @@ const docTemplate = `{
                 }
             }
         },
+        "entities.UserWalletHistory": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "refillType": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
         "usecase.AdminVisitEventInput": {
             "type": "object",
             "properties": {
@@ -587,6 +637,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entities.Product"
+                    }
+                }
+            }
+        },
+        "usecase.GetMyHistoryWalletOutput": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.UserWalletHistory"
                     }
                 }
             }

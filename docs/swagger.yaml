@@ -116,6 +116,21 @@ definitions:
       productID:
         type: integer
     type: object
+  entities.UserWalletHistory:
+    properties:
+      coin:
+        type: number
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      refillType:
+        type: string
+      userID:
+        type: integer
+    type: object
   usecase.AdminVisitEventInput:
     properties:
       achievement_type_id:
@@ -184,6 +199,13 @@ definitions:
       products:
         items:
           $ref: '#/definitions/entities.Product'
+        type: array
+    type: object
+  usecase.GetMyHistoryWalletOutput:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/entities.UserWalletHistory'
         type: array
     type: object
   usecase.LLMChatInput:
@@ -409,6 +431,22 @@ paths:
       security:
       - BearerAuth: []
       summary: get user me
+      tags:
+      - user
+  /users/transactions:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.GetMyHistoryWalletOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: get my transaction
       tags:
       - user
 securityDefinitions:
