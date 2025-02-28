@@ -339,6 +339,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/top": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "get top balance",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecase.TopBalanceOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/users/transactions": {
             "get": {
                 "security": [
@@ -545,6 +572,73 @@ const docTemplate = `{
                 }
             }
         },
+        "entities.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "birthDate": {
+                    "type": "string"
+                },
+                "companyID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isOnline": {
+                    "type": "boolean"
+                },
+                "lastLogin": {
+                    "type": "string"
+                },
+                "lastSurname": {
+                    "type": "string"
+                },
+                "ldapID": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "telegramID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.UserWallet": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "number"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
         "entities.UserWalletHistory": {
             "type": "object",
             "properties": {
@@ -734,6 +828,28 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "usecase.TopBalance": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/entities.User"
+                },
+                "wallet": {
+                    "$ref": "#/definitions/entities.UserWallet"
+                }
+            }
+        },
+        "usecase.TopBalanceOutput": {
+            "type": "object",
+            "properties": {
+                "wallets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/usecase.TopBalance"
+                    }
                 }
             }
         },

@@ -116,6 +116,50 @@ definitions:
       productID:
         type: integer
     type: object
+  entities.User:
+    properties:
+      avatar:
+        type: string
+      birthDate:
+        type: string
+      companyID:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      isOnline:
+        type: boolean
+      lastLogin:
+        type: string
+      lastSurname:
+        type: string
+      ldapID:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+      surname:
+        type: string
+      telegramID:
+        type: integer
+      updatedAt:
+        type: string
+      userID:
+        type: integer
+    type: object
+  entities.UserWallet:
+    properties:
+      price:
+        type: number
+      userID:
+        type: integer
+    type: object
   entities.UserWalletHistory:
     properties:
       coin:
@@ -239,6 +283,20 @@ definitions:
     properties:
       token:
         type: string
+    type: object
+  usecase.TopBalance:
+    properties:
+      user:
+        $ref: '#/definitions/entities.User'
+      wallet:
+        $ref: '#/definitions/entities.UserWallet'
+    type: object
+  usecase.TopBalanceOutput:
+    properties:
+      wallets:
+        items:
+          $ref: '#/definitions/usecase.TopBalance'
+        type: array
     type: object
   usecase.UpcomingEventList:
     properties:
@@ -485,6 +543,22 @@ paths:
       security:
       - BearerAuth: []
       summary: get user me
+      tags:
+      - user
+  /users/top:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecase.TopBalanceOutput'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: get top balance
       tags:
       - user
   /users/transactions:

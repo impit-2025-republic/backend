@@ -76,6 +76,8 @@ func (r *RouterHTTP) SetupRoutes() {
 	r.router.POST("/admin/events/visit", r.AdminVisitEventAction())
 	r.router.POST("/llm", r.LLMAction())
 
+	r.router.GET("/users/top", r.GetTopBalance())
+
 	r.router.GET("/products", r.GetProductsAction())
 	r.router.POST("/products/buy", r.buildAuthMiddleware(r.jwt), r.BuyProductAction())
 	r.router.POST("/products/open/case", r.buildAuthMiddleware(r.jwt), r.CaseOpenAction())
@@ -303,6 +305,26 @@ func (r *RouterHTTP) GetUpcomingEvents() gin.HandlerFunc {
 				repo.NewEventUserVisits(r.db),
 			)
 			act = action.NewUpcomingEventsAction(uc)
+		)
+
+		act.Execute(c.Writer, c.Request)
+	}
+}
+
+// @Summary		get top balance
+// @Tags			user
+// @Security		BearerAuth
+// @Produce		json
+// @Success		200		{object}	usecase.TopBalanceOutput
+// @Failure		500
+// @Router			/users/top [get]
+func (r *RouterHTTP) GetTopBalance() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var (
+			uc = usecase.NewTopBalanceInteractor(
+				repo.NewUserWallet(r.db),
+			)
+			act = action.NewTopBalanceAction(uc)
 		)
 
 		act.Execute(c.Writer, c.Request)

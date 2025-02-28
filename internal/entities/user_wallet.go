@@ -6,6 +6,10 @@ type (
 		UpBalance(user_ids []int, price float64) error
 		DownBalance(user_ids []int, price float64) error
 		GetWallet(userID uint) (UserWallet, error)
+		GetTopBalance() ([]struct {
+			UserWallet
+			User
+		}, error)
 	}
 
 	UserWallet struct {

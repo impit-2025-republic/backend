@@ -39,6 +39,26 @@ func (r userWallet) DownBalance(user_ids []int, price float64) error {
 	return nil
 }
 
+func (r userWallet) GetTopBalance() ([]struct {
+	entities.UserWallet
+	entities.User
+}, error) {
+	var results []struct {
+		entities.UserWallet
+		entities.User
+	}
+
+	err := r.db.Table("user_wallet").
+		Select("user_wallet.*, product.*").
+		Joins("JOIN users ON user_wallet.product_id = users.product_id").
+		Order("user_wallet.price DESC").Limit(10).
+		Scan(&results).Error
+
+	fmt.Println(results)
+
+	return results, err
+}
+
 func (r userWallet) GetWallet(userId uint) (entities.UserWallet, error) {
 	var userWallet entities.UserWallet
 	err := r.db.Where("user_id = ?", userId).First(&userWallet).Error
