@@ -50,7 +50,7 @@ func (r userWallet) GetTopBalance() ([]struct {
 
 	err := r.db.Table("user_wallet").
 		Select("user_wallet.*, product.*").
-		Joins("JOIN users ON user_wallet.product_id = users.product_id").
+		Joins("JOIN users ON user_wallet.user_id = users.user_id").
 		Order("user_wallet.price DESC").Limit(10).
 		Scan(&results).Error
 
