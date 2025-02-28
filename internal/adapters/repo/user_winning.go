@@ -2,6 +2,7 @@ package repo
 
 import (
 	"b8boost/backend/internal/entities"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -32,6 +33,8 @@ func (r userWinningRepo) GetMyWinnings(userID uint) ([]struct {
 		Joins("JOIN product ON user_winnings.product_id = product.product_id").
 		Where("user_winnings.user_id = ?", userID).
 		Scan(&results).Error
+
+	fmt.Println(results)
 
 	return results, err
 }

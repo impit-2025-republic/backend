@@ -28,6 +28,10 @@ func NewTgBot(token string) tgBot {
 	}
 }
 
+func (b tgBot) SendMessage() {
+	// b.bot.Send(tele.Recipient{})
+}
+
 func (b tgBot) handleStart(c tele.Context) error {
 
 	menuButton := &tele.MenuButton{
