@@ -81,5 +81,8 @@ func (s EventStatusService) Start() {
 		}
 	}
 
-	s.eventRepo.UpdateMany(events)
+	err = s.eventRepo.UpdateMany(events)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
