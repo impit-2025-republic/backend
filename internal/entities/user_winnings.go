@@ -7,7 +7,7 @@ type (
 		Create(winner UserWinning) error
 		GetMyWinnings(userID uint) ([]struct {
 			UserWinning
-			Product Product
+			Product
 		}, error)
 	}
 

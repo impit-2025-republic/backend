@@ -21,11 +21,11 @@ func (r userWinningRepo) Create(history entities.UserWinning) error {
 
 func (r userWinningRepo) GetMyWinnings(userID uint) ([]struct {
 	entities.UserWinning
-	Product entities.Product
+	entities.Product
 }, error) {
 	var results []struct {
 		entities.UserWinning
-		Product entities.Product
+		entities.Product
 	}
 
 	err := r.db.Table("user_winnings").
