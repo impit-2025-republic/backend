@@ -76,13 +76,17 @@ func (r eventRepo) GetClosedEvents() ([]entities.Event, error) {
 	return events, nil
 }
 
-func (r eventRepo) GetAllEventsOpenAndRunning() ([]entities.Event, error) {
+func (r eventRepo) GetAllEventsOpenAndRunning() ([]*entities.Event, error) {
 	var events []entities.Event
 	err := r.db.Where("status = 'runnig' OR status = 'open'").Find(&events).Error
 	if err != nil {
 		return nil, err
 	}
-	return events, nil
+	eventsNew := make([]*entities.Event, 0)
+	for _, event := range events {
+		eventsNew = append(eventsNew, &event)
+	}
+	return eventsNew, nil
 }
 
 func (r eventRepo) GetByEventsIds(eventIds []int) ([]entities.Event, error) {
@@ -94,7 +98,7 @@ func (r eventRepo) GetByEventsIds(eventIds []int) ([]entities.Event, error) {
 	return events, nil
 }
 
-func (r eventRepo) UpdateMany(events []entities.Event) error {
+func (r eventRepo) UpdateMany(events []*entities.Event) error {
 
 	// tx := db.Begin()
 	// defer func() {
