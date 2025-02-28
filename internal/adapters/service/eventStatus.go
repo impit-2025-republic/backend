@@ -34,7 +34,7 @@ func NewEventStatusService(
 }
 
 func (s EventStatusService) Start() {
-	events, err := s.eventRepo.GetClosedEvents()
+	events, err := s.eventRepo.GetAllEventsOpenAndRunning()
 	if err != nil {
 		return
 	}
