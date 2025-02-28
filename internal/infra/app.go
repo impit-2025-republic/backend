@@ -2,6 +2,7 @@ package infra
 
 import (
 	"b8boost/backend/config"
+	"b8boost/backend/internal/adapters/repo"
 	"b8boost/backend/internal/infra/ai"
 	"b8boost/backend/internal/infra/cron"
 	"b8boost/backend/internal/infra/database"
@@ -21,6 +22,7 @@ type app struct {
 	ai     ai.Vllm
 	cfg    config.Config
 	db     *gorm.DB
+	tgbot  tgbot.TgBot
 	jwt    jwt.JWKSHandler
 	router router.RouterHTTP
 	ldap   ldap.LDAP
@@ -74,7 +76,7 @@ func (a *app) Serve() *app {
 }
 
 func (a *app) Cron() *app {
-	cron := cron.NewCron(a.db, a.ldap, a.cfg)
+	cron := cron.NewCron(a.db, a.ldap, a.cfg, a.tgbot)
 	cron.Start()
 	return a
 }
@@ -85,7 +87,8 @@ func (a *app) LLM() *app {
 }
 
 func (a *app) TgBot() *app {
-	tgbot.NewTgBot(a.cfg.BotToken).Start()
+	a.tgbot = tgbot.NewTgBot(a.cfg.BotToken, repo.NewUserRepo(a.db))
+	a.tgbot.Start()
 	return a
 }
 

@@ -1,6 +1,7 @@
 package tgbot
 
 import (
+	"b8boost/backend/internal/entities"
 	"fmt"
 	"log"
 	"time"
@@ -8,11 +9,12 @@ import (
 	tele "gopkg.in/telebot.v4"
 )
 
-type tgBot struct {
-	bot *tele.Bot
+type TgBot struct {
+	bot      *tele.Bot
+	userRepo entities.UserRepo
 }
 
-func NewTgBot(token string) tgBot {
+func NewTgBot(token string, userRepo entities.UserRepo) TgBot {
 	pref := tele.Settings{
 		Token:  token,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
@@ -23,16 +25,26 @@ func NewTgBot(token string) tgBot {
 		panic(err)
 	}
 
-	return tgBot{
-		bot: b,
+	return TgBot{
+		bot:      b,
+		userRepo: userRepo,
 	}
 }
 
-func (b tgBot) SendMessage() {
-	// b.bot.Send(tele.Recipient{})
+func (b TgBot) SendMessage(userID int64, message string) {
+	user, err := b.userRepo.GetByID(uint(userID))
+	if err != nil {
+		return
+	}
+	if user.TelegramID == nil || *user.TelegramID == 0 {
+		return
+	}
+	recipient := &tele.User{ID: int64(*user.TelegramID)}
+
+	b.bot.Send(recipient, message)
 }
 
-func (b tgBot) handleStart(c tele.Context) error {
+func (b TgBot) handleStart(c tele.Context) error {
 
 	menuButton := &tele.MenuButton{
 		Type:   "web_app",
@@ -45,7 +57,7 @@ func (b tgBot) handleStart(c tele.Context) error {
 	return c.Reply(fmt.Sprintf("Привет! 👋 \nСпасибо, что выбрали нашего бота. Для завершения активации вам необходимо отправить ваш telegram_id администратору.\nВаш telegram_id: %d\nПожалуйста, скопируйте этот номер и отправьте его администратору для подтверждения доступа к функциям бота. После проверки вашего ID, администратор активирует ваш аккаунт, и вы сможете пользоваться всеми возможностями нашего сервиса.\nЕсли у вас возникнут вопросы, обращайтесь к администратору.\nЖелаем приятного использования!", c.Sender().ID))
 }
 
-func (b tgBot) Start() {
+func (b TgBot) Start() {
 	b.bot.Handle("/start", b.handleStart)
 	go b.bot.Start()
 }
