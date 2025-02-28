@@ -38,7 +38,7 @@ func (c Cron) Start() {
 		service.Sync()
 	})
 
-	checkout.AddFunc("*/5 * * * *", func() {
+	checkout.AddFunc("*/1 * * * *", func() {
 		service := service.NewEventStatusService(
 			repo.NewEventRepo(c.db),
 			repo.NewEventUserVisits(c.db),
