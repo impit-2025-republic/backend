@@ -2,6 +2,7 @@ package repo
 
 import (
 	"b8boost/backend/internal/entities"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -94,21 +95,20 @@ func (r eventRepo) GetByEventsIds(eventIds []int) ([]entities.Event, error) {
 }
 
 func (r eventRepo) UpdateMany(events []entities.Event) error {
-	db := r.db
 
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
+	// tx := db.Begin()
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		tx.Rollback()
+	// 	}
+	// }()
 
-	if err := tx.Error; err != nil {
-		return err
-	}
+	// if err := tx.Error; err != nil {
+	// 	return err
+	// }
 
 	for _, event := range events {
-		result := tx.Model(&entities.Event{}).
+		result := r.db.Model(&entities.Event{}).
 			Where("event_id = ?", event.EventID).
 			Updates(map[string]interface{}{
 				"event_name":          event.EventName,
@@ -124,15 +124,16 @@ func (r eventRepo) UpdateMany(events []entities.Event) error {
 				"company_id":          event.CompanyID,
 			})
 
+		fmt.Println(event)
+
 		if result.Error != nil {
-			tx.Rollback()
 			return result.Error
 		}
 	}
 
-	if err := tx.Commit().Error; err != nil {
-		return err
-	}
+	// if err := tx.Commit().Error; err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
