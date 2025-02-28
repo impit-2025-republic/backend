@@ -7,6 +7,7 @@ import (
 	"b8boost/backend/internal/infra/ai"
 	"b8boost/backend/internal/infra/jwt"
 	"b8boost/backend/internal/infra/ldap"
+	"b8boost/backend/internal/infra/tgbot"
 	"b8boost/backend/internal/usecase"
 	"context"
 	"fmt"
@@ -30,6 +31,7 @@ type RouterHTTP struct {
 	botToken string
 	ldap     ldap.LDAP
 	db       *gorm.DB
+	tgbot    tgbot.TgBot
 }
 
 func NewRouterHTTP(
@@ -38,6 +40,7 @@ func NewRouterHTTP(
 	ldap ldap.LDAP,
 	db *gorm.DB,
 	ai ai.Vllm,
+	tgbot tgbot.TgBot,
 ) RouterHTTP {
 	router := gin.Default()
 	return RouterHTTP{
@@ -47,6 +50,7 @@ func NewRouterHTTP(
 		ldap:     ldap,
 		db:       db,
 		ai:       ai,
+		tgbot:    tgbot,
 	}
 }
 
@@ -165,6 +169,8 @@ func (r *RouterHTTP) VisitEventAction() gin.HandlerFunc {
 			uc = usecase.NewVisitEventInteractor(
 				repo.NewEventRepo(r.db),
 				repo.NewEventUserVisits(r.db),
+				repo.NewUserRepo(r.db),
+				r.tgbot,
 			)
 			act = action.NewVisitEventAction(uc)
 		)
