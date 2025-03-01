@@ -52,32 +52,32 @@ func (s EventStatusService) Start() {
 				event.Status = &newStatus
 			}
 
-			if event.EndDs != nil && *event.Status == entities.EventStatusRunning && now.Compare(*event.EndDs) <= 0 {
-				fmt.Println("Status closed")
-				newStatus := entities.EventStatusClosed
-				event.Status = &newStatus
+			// if event.EndDs != nil && *event.Status == entities.EventStatusRunning && now.Compare(*event.EndDs) <= 0 {
+			// 	fmt.Println("Status closed")
+			// 	newStatus := entities.EventStatusClosed
+			// 	event.Status = &newStatus
 
-				users, err := s.eventUserVisitRepo.GetByEventIDAndVisit(int(event.EventID))
-				if err != nil {
-					continue
-				}
+			// 	users, err := s.eventUserVisitRepo.GetByEventIDAndVisit(int(event.EventID))
+			// 	if err != nil {
+			// 		continue
+			// 	}
 
-				var userIds []int
-				for _, user := range users {
-					s.tgbot.SendMessage(int64(user.UserID), fmt.Sprintf("За посещение мероприятия %s. Вам начислили %.2f", event.Title, event.Coin))
-					s.userWalletHistoryRepo.Create(
-						entities.UserWalletHistory{
-							UserID:      int(user.UserID),
-							Coin:        event.Coin,
-							RefillType:  "plus",
-							Description: fmt.Sprintf("За посещение мероприятия %s. Вам начислили %.2f", event.Title, event.Coin),
-						},
-					)
-					userIds = append(userIds, user.UserID)
-				}
+			// 	var userIds []int
+			// 	for _, user := range users {
+			// 		s.tgbot.SendMessage(int64(user.UserID), fmt.Sprintf("За посещение мероприятия %s. Вам начислили %.2f", event.Title, event.Coin))
+			// 		s.userWalletHistoryRepo.Create(
+			// 			entities.UserWalletHistory{
+			// 				UserID:      int(user.UserID),
+			// 				Coin:        event.Coin,
+			// 				RefillType:  "plus",
+			// 				Description: fmt.Sprintf("За посещение мероприятия %s. Вам начислили %.2f", event.Title, event.Coin),
+			// 			},
+			// 		)
+			// 		userIds = append(userIds, user.UserID)
+			// 	}
 
-				s.userWalletRepo.UpBalance(userIds, event.Coin)
-			}
+			// 	s.userWalletRepo.UpBalance(userIds, event.Coin)
+			// }
 		}
 	}
 
