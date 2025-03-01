@@ -44,7 +44,7 @@ func (s EventStatusService) Start() {
 	for _, event := range events {
 		if event.StartDs != nil && event.Status != nil {
 			eventStartDs := *event.StartDs
-			eventEndDs := *event.EndDs
+
 			fmt.Println("Running")
 			if *event.Status == entities.EventStatusOpen && now.Compare(eventStartDs) <= 0 {
 				fmt.Println("Status Running")
@@ -52,7 +52,7 @@ func (s EventStatusService) Start() {
 				event.Status = &newStatus
 			}
 
-			if *event.Status == entities.EventStatusRunning && now.Compare(eventEndDs) >= 0 {
+			if event.EndDs != nil && *event.Status == entities.EventStatusRunning && now.Compare(*event.EndDs) <= 0 {
 				fmt.Println("Status closed")
 				newStatus := entities.EventStatusClosed
 				event.Status = &newStatus
