@@ -49,7 +49,7 @@ func (c Cron) Start() {
 		service.Start()
 	})
 
-	checkout.AddFunc("@every 30s", func() {
+	checkout.AddFunc("@every 10s", func() {
 		service := service.NewErpSmartService(
 			repo.NewEventRepo(c.db),
 			c.cfg.ERPAccessToken,
