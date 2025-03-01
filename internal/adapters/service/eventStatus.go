@@ -52,7 +52,7 @@ func (s EventStatusService) Start() {
 				event.Status = &newStatus
 			}
 
-			if *event.Status == entities.EventStatusRunning && now.Compare(eventEndDs) <= 0 {
+			if *event.Status == entities.EventStatusRunning && now.Compare(eventEndDs) >= 0 {
 				fmt.Println("Status closed")
 				newStatus := entities.EventStatusClosed
 				event.Status = &newStatus
